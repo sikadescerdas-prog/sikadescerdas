@@ -4,7 +4,19 @@
 
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
-import Maps from "@/components/ui/Maps";
+import dynamic from "next/dynamic";
+
+const Maps = dynamic(
+  () => import("@/components/ui/Maps"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-56 items-center justify-center rounded-xl border text-sm text-gray-400">
+        Memuat peta...
+      </div>
+    ),
+  }
+);
 
 interface MapsProfileProps {
   latitude: number | null;
@@ -17,23 +29,18 @@ export default function MapsProfile({
   longitude,
   onSelect,
 }: MapsProfileProps) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
   const isSelected = latitude !== null && longitude !== null;
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleSelect = (data: { lat: number; lng: number }) => {
     onSelect(data.lat, data.lng);
   };
 
   const formatLocation = () => {
-    if (!isSelected) {
-      return "Pilih lokasi";
-    }
-    return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+    if (!isSelected) return "Pilih lokasi";
+
+    return `${latitude?.toFixed(6)}, ${longitude?.toFixed(6)}`;
   };
 
   return (
@@ -46,11 +53,13 @@ export default function MapsProfile({
         <div className="col-span-8">
           <div
             onClick={() => setOpen((prev) => !prev)}
-            className="flex cursor-pointer items-center justify-between transition hover:text-green-600"
+            className="flex cursor-pointer items-center justify-between hover:text-green-600"
           >
             <span
               className={`text-sm ${
-                isSelected ? "font-medium text-green-600" : "text-gray-400"
+                isSelected
+                  ? "font-medium text-green-600"
+                  : "text-gray-400"
               }`}
             >
               {formatLocation()}
@@ -58,7 +67,7 @@ export default function MapsProfile({
 
             <ChevronRight
               size={16}
-              className={`text-gray-400 transition-transform duration-200 ${
+              className={`transition-transform ${
                 open ? "rotate-90" : ""
               }`}
             />
@@ -72,13 +81,13 @@ export default function MapsProfile({
             value={
               isSelected
                 ? {
-                    lat: latitude,
-                    lng: longitude,
+                    lat: latitude!,
+                    lng: longitude!,
                   }
                 : undefined
             }
             onSelect={handleSelect}
-            onClose={handleClose}
+            onClose={() => setOpen(false)}
           />
         </div>
       )}

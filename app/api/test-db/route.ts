@@ -1,29 +1,28 @@
 // app/api/test-db/route.ts
-// =========================================================
-// DATABASE CONNECTION TEST
-// =========================================================
 
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const users = await prisma.users.findMany();
+    const village = await prisma.villages.findFirst();
 
-    return Response.json({
-      status: "success",
-      message: "Database connected",
-      total_users: users.length,
+    return NextResponse.json({
+      success: true,
+      message: "Database Supabase CONNECTED",
+      data: village,
     });
-
   } catch (error) {
+    console.error("DATABASE TEST ERROR:", error);
 
-    console.error(error);
-
-    return Response.json(
+    return NextResponse.json(
       {
-        status: "error",
-        message: "Database connection failed",
-        error: String(error),
+        success: false,
+        message: "Database FAILED",
+        error:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
       {
         status: 500,

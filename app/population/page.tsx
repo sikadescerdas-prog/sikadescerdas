@@ -1,5 +1,7 @@
 // app/population/page.tsx
 
+export const dynamic = "force-dynamic";
+
 import HeaderVillage from "@/components/village/HeaderVillage";
 import PopulationDetailVillage from "@/components/village/population/PopulationDetailVillage";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +12,9 @@ export default async function PopulationPage() {
   if (!village) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-slate-500">Data desa belum tersedia</p>
+        <p className="text-slate-500">
+          Data desa belum tersedia
+        </p>
       </main>
     );
   }
@@ -21,12 +25,16 @@ export default async function PopulationPage() {
       village_population_details: {
         include: {
           population_master_items: {
-            include: { population_categories: true },
+            include: {
+              population_categories: true,
+            },
           },
         },
       },
     },
-    orderBy: { year: "desc" },
+    orderBy: {
+      year: "desc",
+    },
   });
 
   const formattedPopulations = populations.map((item) => ({
@@ -36,15 +44,18 @@ export default async function PopulationPage() {
     total_male: item.total_male,
     total_female: item.total_female,
     total_population: item.total_population,
-    village_population_details: item.village_population_details.map((detail) => ({
-      total: detail.total,
-      population_master_items: {
-        name: detail.population_master_items.name,
-        population_categories: {
-          name: detail.population_master_items.population_categories.name,
+
+    village_population_details:
+      item.village_population_details.map((detail) => ({
+        total: detail.total,
+        population_master_items: {
+          name: detail.population_master_items.name,
+          population_categories: {
+            name:
+              detail.population_master_items.population_categories.name,
+          },
         },
-      },
-    })),
+      })),
   }));
 
   return (
@@ -61,8 +72,10 @@ export default async function PopulationPage() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 -mt-12 lg:-mt-28">
-        <PopulationDetailVillage populations={formattedPopulations} />
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 -mt-12 lg:-mt-28">
+        <PopulationDetailVillage
+          populations={formattedPopulations}
+        />
       </div>
     </main>
   );

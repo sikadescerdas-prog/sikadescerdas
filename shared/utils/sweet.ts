@@ -1,6 +1,11 @@
 // shared/utils/sweet.ts
 
-import Swal, { SweetAlertIcon } from "sweetalert2";
+type SweetAlertIcon =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "question";
 
 type SweetOptions = {
   title: string;
@@ -24,37 +29,46 @@ type SweetInputOptions = {
   cancelText?: string;
 };
 
-// Tokopedia Green
+const getSwal = async () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const Swal = (await import("sweetalert2")).default;
+
+  return Swal;
+};
+
 const COLORS = {
-  success: '#25c95f',
-  error: '#ef4444',
-  warning: '#f59e0b',
-  info: '#3b82f6',
-  confirm: '#25c95f',
-  cancel: '#6b7280',
-  question: '#25c95f', // <- TAMBAHIN
+  success: "#25c95f",
+  error: "#ef4444",
+  warning: "#f59e0b",
+  info: "#3b82f6",
+  confirm: "#25c95f",
+  cancel: "#6b7280",
+  question: "#25c95f",
 };
 
-// Styles
 const style = {
-  popup: 'swal2-popup',
-  title: 'swal2-title',
-  htmlContainer: 'swal2-html-container',
-  confirmButton: 'swal2-confirm',
-  cancelButton: 'swal2-cancel',
+  customClass: {
+    popup: "swal2-popup",
+    title: "swal2-title",
+    htmlContainer: "swal2-html-container",
+    confirmButton: "swal2-confirm",
+    cancelButton: "swal2-cancel",
+  },
 };
 
-// Get color function
 const getColor = (icon?: SweetAlertIcon): string => {
-  return COLORS[icon || 'success'] || COLORS.success;
+  return COLORS[icon || "success"] || COLORS.success;
 };
 
 export const sweet = {
+  success: async (options: SweetOptions) => {
+    const Swal = await getSwal();
 
-  /* =========================
-     SUCCESS
-  ========================= */
-  success: (options: SweetOptions) => {
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
       title: options.title,
@@ -68,10 +82,11 @@ export const sweet = {
     });
   },
 
-  /* =========================
-     ERROR
-  ========================= */
-  error: (options: SweetOptions) => {
+  error: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
       title: options.title,
@@ -83,10 +98,11 @@ export const sweet = {
     });
   },
 
-  /* =========================
-     WARNING
-  ========================= */
-  warning: (options: SweetOptions) => {
+  warning: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
       title: options.title,
@@ -98,10 +114,11 @@ export const sweet = {
     });
   },
 
-  /* =========================
-     INFO
-  ========================= */
-  info: (options: SweetOptions) => {
+  info: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
       title: options.title,
@@ -113,10 +130,11 @@ export const sweet = {
     });
   },
 
-  /* =========================
-     CONFIRM YES/NO
-  ========================= */
   confirm: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return false;
+
     const result = await Swal.fire({
       ...style,
       title: options.title,
@@ -133,20 +151,19 @@ export const sweet = {
     return result.isConfirmed;
   },
 
-  /* =========================
-     CONFIRM WARNING
-  ========================= */
   confirmWarning: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return false;
+
     const result = await Swal.fire({
       ...style,
       title: options.title,
       text: options.text,
       icon: "warning",
       iconColor: COLORS.warning,
-
-      // 👇 custom delete icon
-      iconHtml: '<i class="fa-solid fa-triangle-exclamation" style="font-size: 30pt;"></i>',
-
+      iconHtml:
+        '<i class="fa-solid fa-triangle-exclamation" style="font-size:30pt;"></i>',
       showCancelButton: true,
       confirmButtonColor: COLORS.warning,
       cancelButtonColor: COLORS.cancel,
@@ -157,35 +174,34 @@ export const sweet = {
     return result.isConfirmed;
   },
 
-  /* =========================
-     CONFIRM DANGER
-  ========================= */
   confirmDanger: async (options: SweetOptions) => {
-  const result = await Swal.fire({
-    ...style,
-    title: options.title,
-    text: options.text,
+    const Swal = await getSwal();
 
-    icon: "warning",
-    iconColor: COLORS.error,
+    if (!Swal) return false;
 
-    // 👇 custom delete icon
-    iconHtml: '<i class="fa-regular fa-trash-can" style="font-size: 30pt;"></i>',
+    const result = await Swal.fire({
+      ...style,
+      title: options.title,
+      text: options.text,
+      icon: "warning",
+      iconColor: COLORS.error,
+      iconHtml:
+        '<i class="fa-regular fa-trash-can" style="font-size:30pt;"></i>',
+      showCancelButton: true,
+      confirmButtonColor: COLORS.error,
+      cancelButtonColor: COLORS.cancel,
+      confirmButtonText: options.confirmButtonText || "Hapus",
+      cancelButtonText: options.cancelText || "Batal",
+    });
 
-    showCancelButton: true,
-    confirmButtonColor: COLORS.error,
-    cancelButtonColor: COLORS.cancel,
-    confirmButtonText: options.confirmButtonText || "Hapus",
-    cancelButtonText: options.cancelText || "Batal",
-  });
+    return result.isConfirmed;
+  },
 
-  return result.isConfirmed;
-},
+  toast: async (options: SweetOptions) => {
+    const Swal = await getSwal();
 
-  /* =========================
-     TOAST
-  ========================= */
-  toast: (options: SweetOptions) => {
+    if (!Swal) return;
+
     return Swal.fire({
       title: options.title,
       text: options.text,
@@ -197,16 +213,24 @@ export const sweet = {
       timer: options.timer || 2000,
       timerProgressBar: true,
       didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
+        toast.addEventListener(
+          "mouseenter",
+          Swal.stopTimer
+        );
+
+        toast.addEventListener(
+          "mouseleave",
+          Swal.resumeTimer
+        );
       },
     });
   },
 
-  /* =========================
-     INPUT
-  ========================= */
   input: async (options: SweetInputOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return null;
+
     const result = await Swal.fire({
       ...style,
       title: options.title,
@@ -226,52 +250,51 @@ export const sweet = {
     if (result.isConfirmed && result.value) {
       return result.value;
     }
+
     return null;
   },
 
-  /* =========================
-    LOADING
-  ========================= */
-  loading: (options?: SweetOptions) => {
+  loading: async (options?: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
-
-      title:
-        options?.title || "Memuat...",
-
-      text:
-        options?.text,
-
+      title: options?.title || "Memuat...",
+      text: options?.text,
       allowOutsideClick: false,
       allowEscapeKey: false,
-
       showConfirmButton: false,
-
       didOpen: () => {
         Swal.showLoading();
       },
     });
   },
 
-  /* =========================
-     CLOSE
-  ========================= */
-  close: () => {
+  close: async () => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     Swal.close();
   },
 
-  /* =========================
-     FIRE CUSTOM
-  ========================= */
-  fire: (options: SweetOptions) => {
+  fire: async (options: SweetOptions) => {
+    const Swal = await getSwal();
+
+    if (!Swal) return;
+
     return Swal.fire({
       ...style,
       title: options.title,
       text: options.text,
       icon: options.icon,
       iconColor: getColor(options.icon),
-      confirmButtonColor: options.confirmButtonColor || COLORS.success,
-      confirmButtonText: options.confirmButtonText || "OK",
+      confirmButtonColor:
+        options.confirmButtonColor || COLORS.success,
+      confirmButtonText:
+        options.confirmButtonText || "OK",
       timer: options.timer,
       showConfirmButton: !options.timer,
     });

@@ -124,17 +124,15 @@ export default function HeaderStoreDetail({ toko, isStoreOpen, onToggleStore, is
     setIsTikTokLoading(true);
 
     try {
-      const result = await sweet.warning({
-        title: "Aplikasi TikTok",
-        text: "Silakan buka ini melalui aplikasi TikTok.",
-        confirmButtonText: "OK",
-      });
+      await sweet.warning({
+  title: "Aplikasi TikTok",
+  text: "Silakan buka ini melalui aplikasi TikTok.",
+  confirmButtonText: "OK",
+});
 
-      if (result.isConfirmed) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      }
+setTimeout(() => {
+  window.location.reload();
+}, 1000);
     } finally {
       setIsTikTokLoading(false);
     }
