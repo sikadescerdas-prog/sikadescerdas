@@ -1,0 +1,494 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model profiles {
+  id               BigInt    @id @default(autoincrement())
+  user_id          String    @unique @db.VarChar(50)
+  fullname         String    @db.VarChar(100)
+  phone            String?   @db.VarChar(20)
+  bio              String?
+  gender           String?   @db.VarChar(10)
+  birth_date       DateTime? @db.Date
+  avatar_url       String?
+  avatar_public_id String?   @db.VarChar(255)
+  province         String?   @db.VarChar(100)
+  regency          String?   @db.VarChar(100)
+  district         String?   @db.VarChar(100)
+  village          String?   @db.VarChar(100)
+  detail_address   String?
+  latitude         Decimal?  @db.Decimal(10, 7)
+  longitude        Decimal?  @db.Decimal(10, 7)
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime  @default(now()) @db.Timestamp(6)
+  is_completed     Boolean   @default(false)
+  users            users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_profile_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id            String        @id @db.VarChar(50)
+  email         String        @unique @db.VarChar(100)
+  username      String        @unique @db.VarChar(50)
+  password_hash String
+  role          String        @default("user") @db.VarChar(20)
+  is_active     Boolean       @default(true)
+  last_login_at DateTime?     @db.Timestamp(6)
+  created_at    DateTime      @default(now()) @db.Timestamp(6)
+  updated_at    DateTime      @default(now()) @db.Timestamp(6)
+  literatures   literatures[]
+  news          news[]
+  profiles      profiles?
+  stores        stores?
+
+  @@index([is_active], map: "idx_users_active")
+  @@index([role], map: "idx_users_role")
+}
+
+model village_structure_categories {
+  id                          BigInt                        @id @default(autoincrement())
+  name                        String                        @unique @db.VarChar(100)
+  type                        String                        @unique @db.VarChar(30)
+  level                       Int?                          @db.SmallInt
+  is_active                   Boolean?                      @default(true)
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  village_structure_groups    village_structure_groups[]
+  village_structure_positions village_structure_positions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model village_structure_periods {
+  id                 BigInt               @id @default(autoincrement())
+  start_year         Int                  @db.SmallInt
+  end_year           Int                  @db.SmallInt
+  is_active          Boolean?             @default(true)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  village_structures village_structures[]
+
+  @@unique([start_year, end_year])
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model village_structure_positions {
+  id                                BigInt                        @id @default(autoincrement())
+  category_id                       BigInt
+  group_id                          BigInt?
+  parent_id                         BigInt?
+  name                              String                        @db.VarChar(100)
+  is_multiple                       Boolean?                      @default(false)
+  is_active                         Boolean?                      @default(true)
+  created_at                        DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                        DateTime?                     @default(now()) @db.Timestamp(6)
+  village_structure_categories      village_structure_categories  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_category")
+  village_structure_groups          village_structure_groups?     @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_group")
+  village_structure_positions       village_structure_positions?  @relation("village_structure_positionsTovillage_structure_positions", fields: [parent_id], references: [id], onUpdate: NoAction, map: "fk_position_parent")
+  other_village_structure_positions village_structure_positions[] @relation("village_structure_positionsTovillage_structure_positions")
+  village_structures                village_structures[]
+
+  @@index([parent_id], map: "idx_position_parent")
+  @@index([category_id], map: "idx_position_category")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model village_structures {
+  id                          BigInt                      @id @default(autoincrement())
+  village_id                  BigInt
+  period_id                   BigInt
+  position_id                 BigInt
+  full_name                   String                      @db.VarChar(100)
+  gender                      String?                     @db.VarChar(10)
+  photo_url                   String?
+  photo_public_id             String?                     @db.VarChar(255)
+  phone                       String?                     @db.VarChar(20)
+  email                       String?                     @db.VarChar(100)
+  address                     String?
+  is_active                   Boolean?                    @default(true)
+  created_at                  DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                   @default(now()) @db.Timestamp(6)
+  village_structure_periods   village_structure_periods   @relation(fields: [period_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_period")
+  village_structure_positions village_structure_positions @relation(fields: [position_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_position")
+  villages                    villages                    @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_village")
+
+  @@unique([village_id, period_id, position_id, full_name], map: "uq_structure_member")
+  @@index([period_id], map: "idx_structure_period")
+  @@index([position_id], map: "idx_structure_position")
+  @@index([village_id], map: "idx_structure_village")
+}
+
+model villages {
+  id                  BigInt                @id @default(autoincrement())
+  name                String?               @db.VarChar(150)
+  history             String?
+  vision              String?
+  mission             String?
+  welcome_message     String?
+  logo_url            String?
+  logo_public_id      String?               @db.VarChar(255)
+  email               String?               @db.VarChar(100)
+  phone               String?               @db.VarChar(20)
+  website             String?               @db.VarChar(255)
+  facebook            String?               @db.VarChar(255)
+  instagram           String?               @db.VarChar(255)
+  tiktok              String?               @db.VarChar(255)
+  youtube             String?               @db.VarChar(255)
+  address             String?
+  rt                  String?               @db.VarChar(5)
+  rw                  String?               @db.VarChar(5)
+  province            String?               @db.VarChar(100)
+  regency             String?               @db.VarChar(100)
+  district            String?               @db.VarChar(100)
+  village             String?               @db.VarChar(100)
+  postal_code         String?               @db.VarChar(10)
+  area_size           Decimal?              @db.Decimal(10, 4)
+  founded_year        Int?                  @db.SmallInt
+  map_embed           String?
+  north_boundary      String?               @db.VarChar(255)
+  south_boundary      String?               @db.VarChar(255)
+  east_boundary       String?               @db.VarChar(255)
+  west_boundary       String?               @db.VarChar(255)
+  created_at          DateTime              @default(now()) @db.Timestamp(6)
+  updated_at          DateTime              @default(now()) @db.Timestamp(6)
+  total_hamlets       Int                   @default(0)
+  total_rw            Int                   @default(0)
+  total_rt            Int                   @default(0)
+  news                news[]
+  village_facilities  village_facilities[]
+  village_populations village_populations[]
+  village_potentials  village_potentials[]
+  village_structures  village_structures[]
+}
+
+model village_structure_groups {
+  id                           BigInt                        @id @default(autoincrement())
+  category_id                  BigInt
+  name                         String                        @db.VarChar(100)
+  is_active                    Boolean?                      @default(true)
+  created_at                   DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                     @default(now()) @db.Timestamp(6)
+  village_structure_categories village_structure_categories  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_group_category")
+  village_structure_positions  village_structure_positions[]
+
+  @@unique([category_id, name])
+  @@index([category_id], map: "idx_structure_group_category")
+}
+
+model village_facilities {
+  id                     BigInt                 @id @default(autoincrement())
+  village_id             BigInt
+  type_id                BigInt
+  name                   String                 @db.VarChar(150)
+  image_url              String?
+  image_public_id        String?                @db.VarChar(255)
+  address                String?
+  link_maps              String?
+  is_active              Boolean                @default(true)
+  created_at             DateTime               @default(now()) @db.Timestamp(6)
+  updated_at             DateTime               @default(now()) @db.Timestamp(6)
+  village_facility_types village_facility_types @relation(fields: [type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_facility_type")
+  villages               villages               @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_facility_village")
+
+  @@unique([village_id, type_id, name], map: "uq_facility")
+  @@index([type_id], map: "idx_facility_type")
+  @@index([village_id], map: "idx_facility_village")
+}
+
+model village_facility_categories {
+  id                     BigInt                   @id @default(autoincrement())
+  name                   String                   @unique @db.VarChar(100)
+  is_active              Boolean                  @default(true)
+  created_at             DateTime                 @default(now()) @db.Timestamp(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamp(6)
+  village_facility_types village_facility_types[]
+}
+
+model village_facility_types {
+  id                          BigInt                      @id @default(autoincrement())
+  category_id                 BigInt
+  name                        String                      @db.VarChar(100)
+  is_active                   Boolean                     @default(true)
+  created_at                  DateTime                    @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime                    @default(now()) @db.Timestamp(6)
+  village_facilities          village_facilities[]
+  village_facility_categories village_facility_categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_facility_type_category")
+
+  @@unique([category_id, name], map: "uq_facility_type")
+  @@index([category_id], map: "idx_facility_type_category")
+}
+
+model village_potential_categories {
+  id                 BigInt               @id @default(autoincrement())
+  name               String               @unique @db.VarChar(100)
+  description        String?
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  updated_at         DateTime             @default(now()) @db.Timestamp(6)
+  village_potentials village_potentials[]
+}
+
+model village_potentials {
+  id                           BigInt                       @id @default(autoincrement())
+  village_id                   BigInt
+  category_id                  BigInt
+  name                         String                       @db.VarChar(150)
+  description                  String?
+  image_url                    String?
+  image_public_id              String?                      @db.VarChar(255)
+  address                      String?
+  link_maps                    String?
+  website                      String?                      @db.VarChar(255)
+  is_active                    Boolean                      @default(true)
+  created_at                   DateTime                     @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime                     @default(now()) @db.Timestamp(6)
+  village_potential_categories village_potential_categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_potential_category")
+  villages                     villages                     @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_potential_village")
+
+  @@unique([village_id, category_id, name], map: "uq_potential_name")
+}
+
+model population_categories {
+  id                      BigInt                    @id @default(autoincrement())
+  name                    String                    @unique @db.VarChar(100)
+  sort_order              Int                       @default(0) @db.SmallInt
+  is_active               Boolean                   @default(true)
+  created_at              DateTime                  @default(now()) @db.Timestamp(6)
+  updated_at              DateTime                  @default(now()) @db.Timestamp(6)
+  population_master_items population_master_items[]
+}
+
+model population_master_items {
+  id                         BigInt                       @id @default(autoincrement())
+  category_id                BigInt
+  name                       String                       @db.VarChar(100)
+  sort_order                 Int                          @default(0) @db.SmallInt
+  is_active                  Boolean                      @default(true)
+  created_at                 DateTime                     @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime                     @default(now()) @db.Timestamp(6)
+  population_categories      population_categories        @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_population_master_category")
+  village_population_details village_population_details[]
+
+  @@unique([category_id, name], map: "uq_population_master_item")
+}
+
+model village_population_details {
+  id                      BigInt                  @id @default(autoincrement())
+  population_id           BigInt
+  item_id                 BigInt
+  total                   Int                     @default(0)
+  sort_order              Int                     @default(0) @db.SmallInt
+  created_at              DateTime                @default(now()) @db.Timestamp(6)
+  updated_at              DateTime                @default(now()) @db.Timestamp(6)
+  population_master_items population_master_items @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_population_detail_item")
+  village_populations     village_populations     @relation(fields: [population_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_population_detail_population")
+
+  @@unique([population_id, item_id], map: "uq_population_detail")
+}
+
+model village_populations {
+  id                         BigInt                       @id @default(autoincrement())
+  village_id                 BigInt
+  year                       Int                          @db.SmallInt
+  total_family_cards         Int                          @default(0)
+  total_male                 Int                          @default(0)
+  total_female               Int                          @default(0)
+  total_population           Int                          @default(0)
+  is_active                  Boolean                      @default(true)
+  created_at                 DateTime                     @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime                     @default(now()) @db.Timestamp(6)
+  village_population_details village_population_details[]
+  villages                   villages                     @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_population_village")
+
+  @@unique([village_id, year], map: "uq_population_year")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model news {
+  id                  BigInt        @id @default(autoincrement())
+  village_id          BigInt
+  author_id           String?       @db.VarChar(50)
+  category            String        @db.VarChar(20)
+  title               String        @db.VarChar(255)
+  slug                String        @unique @db.VarChar(255)
+  excerpt             String
+  content             String
+  thumbnail_url       String
+  thumbnail_public_id String        @db.VarChar(255)
+  content_date        DateTime?     @db.Date
+  content_location    String?
+  is_featured         Boolean       @default(false)
+  is_active           Boolean       @default(true)
+  created_at          DateTime      @default(now()) @db.Timestamp(6)
+  updated_at          DateTime      @default(now()) @db.Timestamp(6)
+  users               users?        @relation(fields: [author_id], references: [id], onUpdate: NoAction, map: "fk_news_author")
+  villages            villages      @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_news_village")
+  news_images         news_images[]
+  news_links          news_links[]
+}
+
+model news_images {
+  id              BigInt   @id @default(autoincrement())
+  news_id         BigInt
+  image_url       String
+  image_public_id String   @db.VarChar(255)
+  created_at      DateTime @default(now()) @db.Timestamp(6)
+  updated_at      DateTime @default(now()) @db.Timestamp(6)
+  news            news     @relation(fields: [news_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_news_images")
+}
+
+model news_links {
+  id         BigInt   @id @default(autoincrement())
+  news_id    BigInt
+  platform   String?  @db.VarChar(30)
+  url        String
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  news       news     @relation(fields: [news_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_news_links")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model literature_links {
+  id            BigInt      @id @default(autoincrement())
+  literature_id BigInt
+  platform      String      @db.VarChar(20)
+  url           String
+  created_at    DateTime    @default(now()) @db.Timestamp(6)
+  updated_at    DateTime    @default(now()) @db.Timestamp(6)
+  literatures   literatures @relation(fields: [literature_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_literature_links")
+
+  @@index([literature_id], map: "idx_literature_links_literature")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model literatures {
+  id                    BigInt                 @id @default(autoincrement())
+  author_id             String                 @db.VarChar(50)
+  type                  String                 @db.VarChar(20)
+  category_id           BigInt?
+  title                 String                 @db.VarChar(255)
+  slug                  String                 @unique @db.VarChar(255)
+  description           String?
+  content               String?
+  file_url              String?
+  file_public_id        String?                @db.VarChar(255)
+  book_url              String?
+  thumbnail_url         String?
+  thumbnail_public_id   String?                @db.VarChar(255)
+  is_active             Boolean                @default(true)
+  created_at            DateTime               @default(now()) @db.Timestamp(6)
+  updated_at            DateTime               @default(now()) @db.Timestamp(6)
+  literature_links      literature_links[]
+  users                 users                  @relation(fields: [author_id], references: [id], onUpdate: NoAction, map: "fk_literatures_author")
+  literature_categories literature_categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_literatures_category")
+
+  @@index([is_active], map: "idx_literatures_active")
+  @@index([author_id], map: "idx_literatures_author")
+  @@index([category_id], map: "idx_literatures_category")
+  @@index([type], map: "idx_literatures_type")
+}
+
+model literature_categories {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @unique @db.VarChar(100)
+  created_at  DateTime      @default(now()) @db.Timestamp(6)
+  updated_at  DateTime      @default(now()) @db.Timestamp(6)
+  literatures literatures[]
+}
+
+model product_categories {
+  id         BigInt     @id @default(autoincrement())
+  name       String     @unique @db.VarChar(100)
+  is_active  Boolean    @default(true)
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @default(now()) @db.Timestamp(6)
+  products   products[]
+}
+
+model product_images {
+  id              BigInt   @id @default(autoincrement())
+  product_id      BigInt
+  image_url       String
+  image_public_id String?  @db.VarChar(255)
+  created_at      DateTime @default(now()) @db.Timestamp(6)
+  updated_at      DateTime @default(now()) @db.Timestamp(6)
+  products        products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_image")
+
+  @@index([product_id], map: "idx_product_images_product_id")
+}
+
+model products {
+  id                  BigInt              @id @default(autoincrement())
+  store_id            BigInt
+  category_id         BigInt?
+  name                String              @db.VarChar(150)
+  slug                String              @unique @db.VarChar(150)
+  description         String?
+  thumbnail_url       String
+  thumbnail_public_id String?             @db.VarChar(255)
+  price               Decimal             @default(0) @db.Decimal(15, 0)
+  stock               Int                 @default(0)
+  unit                String?             @db.VarChar(30)
+  weight              Decimal?            @db.Decimal(10, 2)
+  is_featured         Boolean             @default(false)
+  is_active           Boolean             @default(true)
+  created_at          DateTime            @default(now()) @db.Timestamp(6)
+  updated_at          DateTime            @default(now()) @db.Timestamp(6)
+  product_images      product_images[]
+  product_categories  product_categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_product_category")
+  stores              stores              @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_store")
+
+  @@index([category_id], map: "idx_products_category_id")
+  @@index([store_id], map: "idx_products_store_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model store_marketplaces {
+  id         BigInt   @id @default(autoincrement())
+  store_id   BigInt
+  platform   String   @db.VarChar(30)
+  url        String
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  stores     stores   @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_store_marketplace")
+
+  @@unique([store_id, platform], map: "uq_store_platform")
+  @@index([store_id], map: "idx_store_marketplaces_store_id")
+}
+
+model stores {
+  id                 BigInt               @id @default(autoincrement())
+  owner_id           String               @unique @db.VarChar(50)
+  name               String               @db.VarChar(150)
+  slug               String               @unique @db.VarChar(150)
+  description        String?
+  logo_url           String?
+  logo_public_id     String?              @db.VarChar(255)
+  banner_url         String?
+  banner_public_id   String?              @db.VarChar(255)
+  phone              String?              @db.VarChar(20)
+  email              String?              @db.VarChar(100)
+  province           String?              @db.VarChar(100)
+  regency            String?              @db.VarChar(100)
+  district           String?              @db.VarChar(100)
+  village            String?              @db.VarChar(100)
+  address            String?
+  latitude           Decimal?             @db.Decimal(10, 7)
+  longitude          Decimal?             @db.Decimal(10, 7)
+  is_store_complete  Boolean              @default(false)
+  is_verified        Boolean              @default(false)
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  updated_at         DateTime             @default(now()) @db.Timestamp(6)
+  products           products[]
+  store_marketplaces store_marketplaces[]
+  users              users                @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_store_owner")
+
+  @@index([owner_id], map: "idx_stores_owner_id")
+}
