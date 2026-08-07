@@ -4,7 +4,7 @@
 
 export default function HeaderNews() {
   return (
-    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 px-8 pb-6 pt-8">
+    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-700 px-8 pb-6 pt-8">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-16 -top-16 h-40 w-40 animate-pulse rounded-full bg-white/40 blur-2xl" />

@@ -35,7 +35,7 @@ export default function TabPosition({ onAdd, onEdit }: Props) {
       </div>
 
       {/* TABLE CONTAINER (Atas-bawah di Mobile, Kiri-Kanan di Desktop) */}
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-6">
         {/* PEMERINTAH DESA */}
         <TableGovernment onEdit={onEdit} />
 

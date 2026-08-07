@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Users, Filter } from "lucide-react";
+import { Pencil, Trash2, Plus, Users, Filter, AlertCircle } from "lucide-react";
 import Swal from "sweetalert2";
 
 import { useMembers } from "@/modules/dashboard/structure/hooks/useMembers";
@@ -69,6 +69,8 @@ export default function TableMember({ onAdd, onEdit }: Props) {
     return sortMembers(result);
   }, [members, selectedPeriodId]);
 
+  const isPeriodEmpty = !periods || periods.length === 0;
+
   async function handleDelete(id: string) {
     const result = await Swal.fire({
       title: "Hapus pengurus?",
@@ -105,6 +107,19 @@ export default function TableMember({ onAdd, onEdit }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* KETERANGAN / PANDUAN PRA-PENGISIAN (DI ATAS HEADER) */}
+      {isPeriodEmpty && (
+        <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-900">
+          <AlertCircle size={20} className="mt-0.5 flex-shrink-0 text-blue-600" />
+          <div className="text-sm">
+            <p className="font-semibold">Informasi Konfigurasi Struktur</p>
+            <p className="mt-1 text-blue-700">
+              Untuk mulai mengelola data pengurus, silakan buat dan tentukan <strong>Masa Periode Jabatan</strong> terlebih dahulu agar setiap data pejabat dapat terdata dengan akurat.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* HEADER */}
       <div className="flex flex-col gap-4 rounded-xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -152,7 +167,7 @@ export default function TableMember({ onAdd, onEdit }: Props) {
             <p className="text-sm text-gray-400">
               {selectedPeriodId
                 ? "Tidak ada pengurus pada periode yang dipilih"
-                : "Silakan tambahkan data pengurus terlebih dahulu"}
+                : "Silakan pilih masa periode atau tambahkan data pengurus baru."}
             </p>
           </div>
         </div>

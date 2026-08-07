@@ -39,9 +39,8 @@ export function PopulationComparisonCard({
   const currKK = currentData?.total_family_cards || 0;
   const prevPop = previousData?.total_population || 0;
 
-  const totalActive = currPop > 0 ? currPop : 1;
-  const malePercent = Math.round((currMale / totalActive) * 100);
-  const femalePercent = 100 - malePercent;
+  const malePercent = currPop > 0 ? Math.round((currMale / currPop) * 100) : 0;
+  const femalePercent = currPop > 0 ? 100 - malePercent : 0;
 
   const radius = 55;
   const circumference = 2 * Math.PI * radius;
@@ -96,7 +95,7 @@ export function PopulationComparisonCard({
                     type="button"
                     onMouseEnter={() => setHoveredGender("male")}
                     onMouseLeave={() => setHoveredGender(null)}
-                    className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1.5 ${hoveredGender === 'male' ? 'bg-blue-600 text-white shadow-md scale-105' : 'bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100'}`}
+                    className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1.5 ${hoveredGender === 'male' ? 'bg-blue-600 text-white shadow-md scale-105' : 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100'}`}
                   >
                     <span className="w-2 h-2 rounded-full bg-blue-600"></span> L: {currMale.toLocaleString("id-ID")}
                   </button>
@@ -104,7 +103,7 @@ export function PopulationComparisonCard({
                     type="button"
                     onMouseEnter={() => setHoveredGender("female")}
                     onMouseLeave={() => setHoveredGender(null)}
-                    className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1.5 ${hoveredGender === 'female' ? 'bg-rose-600 text-white shadow-md scale-105' : 'bg-rose-50 text-rose-700 border border-rose-100 hover:bg-rose-100'}`}
+                    className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all flex items-center gap-1.5 ${hoveredGender === 'female' ? 'bg-rose-600 text-white shadow-md scale-105' : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'}`}
                   >
                     <span className="w-2 h-2 rounded-full bg-rose-500"></span> P: {currFemale.toLocaleString("id-ID")}
                   </button>
@@ -114,12 +113,14 @@ export function PopulationComparisonCard({
               <div className="sm:col-span-5 flex flex-col items-center justify-center relative">
                 <div className="relative w-36 h-36 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90 drop-shadow-xl" viewBox="0 0 140 140">
+                    {/* Ring Perempuan (Merah/Rose) */}
                     <circle
                       cx="70" cy="70" r={radius} fill="transparent" stroke="#f43f5e" strokeWidth="14" strokeLinecap="round"
                       className={`transition-all duration-300 cursor-pointer ${hoveredGender === 'female' ? 'opacity-100 stroke-[18]' : hoveredGender === 'male' ? 'opacity-25' : 'opacity-90'}`}
                       onMouseEnter={() => setHoveredGender("female")}
                       onMouseLeave={() => setHoveredGender(null)}
                     />
+                    {/* Ring Laki-Laki (Biru) */}
                     <circle
                       cx="70" cy="70" r={radius} fill="transparent" stroke="#2563eb" strokeWidth="14"
                       strokeDasharray={circumference} strokeDashoffset={circumference - (malePercent / 100) * circumference} strokeLinecap="round"
@@ -190,28 +191,28 @@ export function PopulationComparisonCard({
         </div>
 
         <div className="md:col-span-5 grid grid-cols-1 gap-6">
-          <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-indigo-950 p-7 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden flex flex-col justify-between group">
-            <div className="absolute right-0 bottom-0 w-40 h-40 bg-blue-500/20 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+          <div className="bg-gradient-to-br from-emerald-800 via-teal-800 to-green-900 p-7 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden flex flex-col justify-between group">
+            <div className="absolute right-0 bottom-0 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
 
             <div className="flex items-center justify-between relative z-10">
-              <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl text-blue-300 border border-white/10">
+              <div className="p-3 bg-white/15 backdrop-blur-md rounded-2xl text-emerald-100 border border-white/20">
                 <FileText className="w-6 h-6" />
               </div>
-              <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/30">
+              <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-900/60 text-emerald-100 border border-emerald-400/30">
                 Dukcapil Data
               </span>
             </div>
 
             <div className="my-4 relative z-10">
-              <span className="text-[11px] font-black uppercase tracking-widest text-blue-300">Total Kartu Keluarga (KK)</span>
+              <span className="text-[11px] font-black uppercase tracking-widest text-emerald-200">Total Kartu Keluarga (KK)</span>
               <div className="flex items-baseline gap-2 mt-1">
                 <h4 className="text-4xl sm:text-5xl font-black tracking-tight">{currKK.toLocaleString("id-ID")}</h4>
-                <span className="text-lg font-bold text-blue-300">Dokumen</span>
+                <span className="text-lg font-bold text-emerald-200">KK</span>
               </div>
             </div>
 
-            <div className="text-xs font-medium text-blue-200/80 flex items-center gap-1.5 relative z-10">
-              <Globe className="w-4 h-4 text-blue-400" /> Tersebar di seluruh wilayah administratif desa
+            <div className="text-xs font-medium text-emerald-100/90 flex items-center gap-1.5 relative z-10">
+              <Globe className="w-4 h-4 text-emerald-300" /> Tersebar di seluruh wilayah administratif desa
             </div>
           </div>
 

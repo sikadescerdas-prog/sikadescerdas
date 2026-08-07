@@ -6,7 +6,7 @@ import { FaTree } from "react-icons/fa";
 
 export default function HeaderPotential() {
   return (
-    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 px-8 pb-6 pt-8">
+    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 px-8 pb-6 pt-8">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-16 -top-16 h-40 w-40 animate-pulse rounded-full bg-white/40 blur-2xl" />

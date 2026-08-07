@@ -1,12 +1,12 @@
-// components/dashboard/facility/HeaderFacility.tsx
+// components/dashboard/structure/HeaderStructure.tsx
 
 "use client";
 
-import { FaBuilding } from "react-icons/fa";
+import { Users } from "lucide-react";
 
-export default function HeaderFacility() {
+export default function HeaderStructure() {
   return (
-    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 px-8 pb-6 pt-8">
+    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 px-8 pb-6 pt-8">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-16 -top-16 h-40 w-40 animate-pulse rounded-full bg-white/40 blur-2xl" />
@@ -20,12 +20,12 @@ export default function HeaderFacility() {
           <div className="flex items-center gap-5">
             {/* Icon */}
             <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm">
-              <FaBuilding className="h-7 w-7 text-white" />
+              <Users className="h-7 w-7 text-white" />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-white">Fasilitas Desa</h2>
-              <p className="mt-1 text-sm text-white/80">Kelola data fasilitas dan sarana desa</p>
+              <h2 className="text-2xl font-bold tracking-tight text-white">Struktur Organisasi Desa</h2>
+              <p className="mt-1 text-sm text-white/80">Kelola pejabat, lembaga, dan masa periode jabatan desa</p>
             </div>
           </div>
 

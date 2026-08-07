@@ -1,17 +1,17 @@
-// components/dashboard/population/HeaderPopulation.tsx
+// components/dashboard/structure/HeaderStructure.tsx
 
 "use client";
 
-import { FaUsers } from "react-icons/fa";
+import { Users } from "lucide-react";
 
-export default function HeaderPopulation() {
+export default function HeaderStructure() {
   return (
-    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-500 px-8 pb-6 pt-8">
+    <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-600 px-8 pb-6 pt-8">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -left-16 -top-16 h-40 w-40 animate-pulse rounded-full bg-white/40 blur-2xl" />
-        <div className="absolute -right-8 top-1/2 h-32 w-32 animate-pulse rounded-full bg-white/30 blur-xl delay-700" />
-        <div className="absolute -bottom-16 left-1/3 h-48 w-48 animate-pulse rounded-full bg-white/30 blur-2xl delay-1000" />
+        <div className="absolute -left-16 -top-16 h-40 w-40 animate-pulse rounded-full bg-white/20 blur-2xl" />
+        <div className="absolute -right-8 top-1/2 h-32 w-32 animate-pulse rounded-full bg-white/20 blur-xl delay-700" />
+        <div className="absolute -bottom-16 left-1/3 h-48 w-48 animate-pulse rounded-full bg-white/20 blur-2xl delay-1000" />
       </div>
 
       {/* Content */}
@@ -19,13 +19,13 @@ export default function HeaderPopulation() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             {/* Icon */}
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/40 bg-white/30 backdrop-blur-sm">
-              <FaUsers className="h-7 w-7 text-white" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/40 bg-white/20 backdrop-blur-sm">
+              <Users className="h-7 w-7 text-white" />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-white">Data Penduduk</h2>
-              <p className="mt-1 text-sm text-white/80">Kelola data kependudukan desa</p>
+              <h2 className="text-2xl font-bold tracking-tight text-white">Struktur Organisasi Desa</h2>
+              <p className="mt-1 text-sm text-white/90">Kelola pejabat, lembaga, dan masa periode jabatan desa</p>
             </div>
           </div>
 
@@ -42,7 +42,7 @@ export default function HeaderPopulation() {
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex h-1 items-center gap-1">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="h-full flex-1 bg-white/40" />
+            <div key={i} className="h-full flex-1 bg-white/30" />
           ))}
         </div>
         <div className="h-1 bg-white" />
