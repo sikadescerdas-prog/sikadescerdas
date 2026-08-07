@@ -19,6 +19,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     pathname.startsWith("/login") || 
     pathname.startsWith("/register") || 
     pathname.startsWith("/profile") || 
+    pathname.startsWith("/setup") || 
     pathname.startsWith("/settings");
 
   // 2. Footer tidak muncul di halaman tertentu
@@ -26,6 +27,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     pathname.startsWith("/login") || 
     pathname.startsWith("/register") ||
     pathname.startsWith("/profile") ||
+    pathname.startsWith("/setup") ||
     pathname.startsWith("/settings");
 
   return (

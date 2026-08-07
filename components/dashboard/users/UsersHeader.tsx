@@ -3,8 +3,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaUsers, FaUser, FaStore, FaSearch, FaTimes, FaRedo } from "react-icons/fa";
+import { FaUsers, FaUser, FaStore, FaSearch, FaTimes, FaRedo, FaPlus } from "react-icons/fa";
+import Link from "next/link";
 import { useUsers } from "@/core/users/hooks/useUsers";
+
+interface User {
+  role?: string;
+}
 
 interface UsersHeaderProps {
   searchTerm: string;
@@ -14,6 +19,27 @@ interface UsersHeaderProps {
 export default function UsersHeader({ searchTerm, setSearchTerm }: UsersHeaderProps) {
   const { users } = useUsers();
   const [localSearch, setLocalSearch] = useState(searchTerm);
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  // Ambil data user dari /api/auth/me untuk pengecekan role
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) return;
+        const data = await res.json();
+        setUser({
+          role: data.user?.role,
+        });
+      } catch (error) {
+        console.error("Fetch user error:", error);
+      } finally {
+        setLoadingUser(false);
+      }
+    }
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     setLocalSearch(searchTerm);
@@ -42,6 +68,9 @@ export default function UsersHeader({ searchTerm, setSearchTerm }: UsersHeaderPr
   const usersOnly = filtered.filter((u) => !u.role || u.role === "user").length;
   const sellers = filtered.filter((u) => u.role === "seller").length;
 
+  // Cek apakah role user yang sedang login adalah superadmin
+  const isSuperAdmin = user?.role === "superadmin";
+
   return (
     <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-6 md:px-8">
       <div className="absolute inset-0 pointer-events-none">
@@ -52,11 +81,24 @@ export default function UsersHeader({ searchTerm, setSearchTerm }: UsersHeaderPr
       <div className="relative z-10 flex flex-col gap-6">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 backdrop-blur">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/15 backdrop-blur">
               <FaUsers className="text-xl text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Manajemen Users</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl font-bold text-white">Manajemen Users</h1>
+                
+                {/* Tombol Add HANYA MUNCUL jika superadmin dan tidak sedang loading */}
+                {!loadingUser && isSuperAdmin && (
+                  <Link
+                    href="/dashboard/users/form"
+                    className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow transition hover:bg-green-500"
+                    title="Tambah User Baru"
+                  >
+                    <FaPlus className="text-xs" />
+                  </Link>
+                )}
+              </div>
               <p className="text-sm text-white/60">Data user & seller sistem</p>
             </div>
           </div>

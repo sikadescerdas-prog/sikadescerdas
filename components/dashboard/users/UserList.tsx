@@ -2,17 +2,22 @@
 
 "use client";
 
+import { useState } from "react";
 import { useUsers } from "@/core/users/hooks/useUsers";
 import { useTableQuery } from "@/shared/hooks/useTableQuery";
 import UsersHeader from "./UsersHeader";
-import { FaSpinner, FaSearch, FaEye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaSpinner, FaSearch, FaEye, FaTrash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function UserList() {
   const { users, loading, error, refreshUsers } = useUsers();
   const { search, setSearch, page, setPage, limit } = useTableQuery({ defaultLimit: 50 });
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const filteredUsers = users.filter((user) => {
     const role = user.role || "user";
+    // Sembunyikan superadmin dari daftar tabel agar aman
     if (role === "superadmin") return false;
 
     const term = search.toLowerCase();
@@ -40,6 +45,30 @@ export default function UserList() {
   const totalPages = Math.ceil(sortedUsers.length / limit) || 1;
   const startIndex = (page - 1) * limit;
   const paginatedUsers = sortedUsers.slice(startIndex, startIndex + limit);
+
+  async function handleDelete(userId: string) {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message ?? "Gagal menghapus akun.");
+      }
+
+      alert("Akun berhasil dihapus.");
+      setDeletingId(null);
+      refreshUsers();
+    } catch (error: any) {
+      console.error("DELETE USER ERROR:", error);
+      alert(error.message || "Terjadi kesalahan server.");
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -78,7 +107,7 @@ export default function UserList() {
 
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-6 py-3 dark:border-slate-800 dark:bg-slate-800/30">
         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          Daftar Seluruh Pengguna Sistem
+          Daftar Admin Desa & Pengguna Sistem
         </span>
         <div className="text-xs text-slate-400">
           Total: <span className="font-semibold text-slate-700 dark:text-slate-200">{sortedUsers.length}</span> data
@@ -138,14 +167,24 @@ export default function UserList() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <button
-                        title="Lihat Detail"
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                        onClick={() => alert(`Detail user: ${user.username}`)}
-                      >
-                        <FaEye className="text-xs" />
-                        <span>Detail</span>
-                      </button>
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          title="Lihat Detail"
+                          className="inline-flex items-center gap-1 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                          onClick={() => alert(`Detail user: ${user.username}`)}
+                        >
+                          <FaEye className="text-xs" />
+                          <span>Detail</span>
+                        </button>
+                        <button
+                          title="Hapus Akun"
+                          className="inline-flex items-center gap-1 rounded-xl bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/40"
+                          onClick={() => setDeletingId(user.id)}
+                        >
+                          <FaTrash className="text-xs" />
+                          <span>Hapus</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -180,6 +219,42 @@ export default function UserList() {
           </button>
         </div>
       </div>
+
+      {/* MODAL KONFIRMASI HAPUS */}
+      {deletingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400 mb-4">
+              <FaTrash size={20} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              Hapus Akun Ini?
+            </h3>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Tindakan ini bersifat permanen. Akun (termasuk Admin Desa atau pengguna lain yang dipilih) akan dihapus secara total dari sistem.
+            </p>
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setDeletingId(null)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => handleDelete(deletingId)}
+                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+              >
+                {isDeleting && <FaSpinner className="animate-spin text-xs" />}
+                <span>Ya, Hapus</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
