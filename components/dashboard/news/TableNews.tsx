@@ -178,7 +178,7 @@ export default function TableNews({ news, loading, search, category, onSearchCha
                 <thead className="bg-green-50">
                   <tr>
                     <th className="px-6 py-3 text-left">No</th>
-                    <th className="px-6 py-3 text-left">Tanggal</th>
+                    <th className="px-6 py-3 text-left">Tanggal Acara</th>
                     <th className="px-6 py-3 text-left">Nama Berita</th>
                     <th className="px-6 py-3 text-left">Lokasi</th>
                     <th className="px-6 py-3 text-left">Deskripsi</th>
