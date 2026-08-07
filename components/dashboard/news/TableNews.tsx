@@ -27,8 +27,9 @@ interface Props {
 
 const CATEGORY_LABELS: Record<string, string> = { news: "Berita", announcement: "Pengumuman", event: "Kegiatan" };
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
+// Diubah menggunakan tanggal hari ini (Current Date)
+function getCurrentDate() {
+  return new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
 function limitText(text: string | null, limit: number) {
@@ -189,7 +190,8 @@ export default function TableNews({ news, loading, search, category, onSearchCha
                   {news.map((item, index) => (
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">{index + 1}</td>
-                      <td className="whitespace-nowrap px-6 py-4">{formatDate(item.created_at)}</td>
+                      {/* Menggunakan tanggal hari ini */}
+                      <td className="whitespace-nowrap px-6 py-4">{getCurrentDate()}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-3">
                           <div className="relative h-14 w-24 overflow-hidden rounded-lg bg-gray-100">
