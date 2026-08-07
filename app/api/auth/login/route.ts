@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     // Cek apakah akun aktif
     if (!user.is_active) {
       return NextResponse.json(
-        { message: "Akun telah dinonaktifkan" },
+        { message: "Akun telah dinonaktifkan, silahkan hubungi admin" },
         { status: 403 }
       );
     }

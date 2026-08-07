@@ -5,43 +5,43 @@ import { Users, Store, School, MapPin, ArrowUpRight } from "lucide-react";
 import type { HomeStatistics } from "@/modules/home/types/home.types";
 
 interface Props {
-  statistics: HomeStatistics;
+  statistics?: HomeStatistics | null;
 }
 
 export default function StatsSection({ statistics }: Props) {
   const cards = [
     {
       title: "Penduduk",
-      value: statistics.population.toLocaleString("id-ID"),
+      value: (statistics?.population ?? 0).toLocaleString("id-ID"),
       unit: "Jiwa",
-      subtitle: `Tahun ${statistics.populationYear ?? "-"}`,
+      subtitle: `Tahun ${statistics?.populationYear ?? "-"}`,
       icon: Users,
       gradient: "from-emerald-400 via-green-500 to-green-700",
       badge: "Demografi",
     },
     {
       title: "UMKM",
-      value: statistics.umkm.products,
+      value: statistics?.umkm?.products ?? 0,
       unit: "Produk",
-      subtitle: `${statistics.umkm.total} Pelaku Usaha Aktif`,
+      subtitle: `${statistics?.umkm?.total ?? 0} Pelaku Usaha Aktif`,
       icon: Store,
       gradient: "from-green-400 via-teal-500 to-emerald-700",
       badge: "Ekonomi",
     },
     {
       title: "Fasilitas",
-      value: statistics.facilities.total,
+      value: statistics?.facilities?.total ?? 0,
       unit: "Sarana Desa",
-      subtitle: statistics.facilities.categories.slice(0, 3).join(" • ") || "Desa",
+      subtitle: statistics?.facilities?.categories?.slice(0, 3).join(" • ") || "Desa",
       icon: School,
       gradient: "from-blue-400 via-cyan-500 to-blue-700",
       badge: "Layanan",
     },
     {
       title: "Wilayah",
-      value: statistics.region.hamlets,
+      value: statistics?.region?.hamlets ?? 0,
       unit: "Dusun",
-      subtitle: `${statistics.region.rt} RT / ${statistics.region.rw} RW`,
+      subtitle: `${statistics?.region?.rt ?? 0} RT / ${statistics?.region?.rw ?? 0} RW`,
       icon: MapPin,
       gradient: "from-orange-400 via-red-500 to-red-700",
       badge: "Administrasi",

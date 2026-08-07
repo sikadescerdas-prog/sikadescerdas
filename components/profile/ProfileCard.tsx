@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, LayoutDashboard, Store, User } from "lucide-react";
+import { Loader2, LayoutDashboard, Store, User, Settings } from "lucide-react";
 
 import { useProfile } from "@/core/profile/hooks/useProfile";
 import { profileService } from "@/core/profile/services/profile.service";
@@ -30,9 +30,6 @@ export default function ProfileCard() {
     setOpeningStore(true);
 
     try {
-      // =========================
-      // CEK PROFILE TERBARU
-      // =========================
       const isCompleted = await profileService.getStatus();
 
       if (!isCompleted) {
@@ -45,9 +42,6 @@ export default function ProfileCard() {
         return;
       }
 
-      // =========================
-      // INPUT NAMA TOKO
-      // =========================
       const storeName = await sweet.input({
         title: "Buka Toko",
         text: "Masukkan nama toko Anda.",
@@ -67,14 +61,7 @@ export default function ProfileCard() {
 
       if (!storeName) return;
 
-      // =========================
-      // CREATE TOKO
-      // =========================
       await storeService.createStore(storeName.trim());
-
-      // =========================
-      // REFRESH ROLE
-      // =========================
       await refetch();
 
       await sweet.success({
@@ -155,6 +142,16 @@ export default function ProfileCard() {
       : []),
   ];
 
+  // Menu Pengaturan dengan ikon Gear di bawah
+  const settingsMenuItems: MenuItem[] = [
+    {
+      label: "Pengaturan",
+      icon: <Settings size={18} />,
+      variant: "default",
+      onClick: () => router.push("/profile/security"),
+    },
+  ];
+
   if (loading || openingStore) {
     return (
       <div className="flex min-h-screen items-center justify-center gap-2 text-gray-500">
@@ -176,7 +173,7 @@ export default function ProfileCard() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-50 via-white to-white px-6 py-12">
-      <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white p-6 shadow-xl space-y-6">
         <HeaderProfile
           fullname={user.fullname}
           username={user.username}
@@ -184,11 +181,16 @@ export default function ProfileCard() {
           avatarUrl={user.avatar}
         />
 
-        <div className="my-6 border-t border-gray-100" />
+        <div className="border-t border-gray-100" />
 
         <MenuProfile items={menuItems} />
 
-        <div className="my-6 border-t border-gray-100" />
+        <div className="border-t border-gray-100" />
+
+        {/* Menu Pengaturan dengan ikon Gear tepat di atas tombol Logout */}
+        <MenuProfile items={settingsMenuItems} />
+
+        <div className="border-t border-gray-100" />
 
         <LogoutButton />
       </div>

@@ -70,6 +70,31 @@ export const authService = {
   },
 
   /* =========================
+     UPDATE PASSWORD
+  ========================= */
+  async updatePassword(
+    currentPasswordHash: string,
+    newPasswordHash: string
+  ): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/update-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPasswordHash,
+        newPasswordHash,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      throw new Error(json.message ?? "Gagal mengubah sandi");
+    }
+  },
+
+  /* =========================
      LOGOUT
   ========================= */
   async logout(): Promise<void> {

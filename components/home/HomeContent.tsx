@@ -12,38 +12,33 @@ import CTASection from "@/components/home/CTASection";
 import { useHome } from "@/modules/home/hooks/useHome";
 
 export default function HomeContent() {
-  const { data, loading, error } = useHome();
+  const { data } = useHome();
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-2xl bg-white px-6 py-4 text-sm text-gray-500 shadow">
-          Memuat data desa...
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-2xl bg-white px-6 py-4 text-sm text-red-500 shadow">
-          Data homepage tidak tersedia
-        </div>
-      </div>
-    );
-  }
+  // Menggunakan "as any" agar TypeScript tidak protes jika ada perbedaan tipe properti saat data kosong
+  const displayData = data || ({
+    village: null,
+    statistics: {
+      population: 0,
+      populationYear: new Date().getFullYear(),
+      umkm: { products: 0, total: 0 },
+      facilities: { total: 0, categories: [] },
+      region: { hamlets: 0, rt: 0, rw: 0 },
+    },
+    literatures: { total: 0, books: 0, articles: 0 },
+    products: [],
+    news: [],
+  } as any);
 
   return (
     <>
       {/* HERO */}
       <section>
-        <HeroSection village={data.village} />
+        <HeroSection village={displayData.village} />
       </section>
 
       {/* STATISTIK */}
       <section className="mt-5 lg:mt-8">
-        <StatsSection statistics={data.statistics} />
+        <StatsSection statistics={displayData.statistics} />
       </section>
 
       {/* CUACA + LITERASI */}
@@ -53,22 +48,22 @@ export default function HomeContent() {
         </div>
         <div className="lg:col-span-7">
           <LiteracySection
-            total={data.literatures.total}
-            books={data.literatures.books}
-            articles={data.literatures.articles}
+            total={displayData.literatures.total}
+            books={displayData.literatures.books}
+            articles={displayData.literatures.articles}
           />
         </div>
       </section>
 
       {/* UMKM */}
       <section className="mt-6 xl:mt-8">
-        <UmkmSection products={data.products} />
+        <UmkmSection products={displayData.products} />
       </section>
 
       {/* BERITA + LAYANAN */}
       <section className="mt-6 flex flex-col gap-5 lg:grid lg:grid-cols-12 xl:mt-8">
         <div className="w-full lg:col-span-8">
-          <BeritaSection news={data.news} />
+          <BeritaSection news={displayData.news} />
         </div>
         <div className="w-full lg:col-span-4">
           <LayananSection />

@@ -86,7 +86,7 @@ export default function UserMenu({ user, loading = false, onLogout }: UserMenuPr
 
             <div className="my-2 border-t border-slate-100" />
 
-            <Link href="/settings" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 transition hover:bg-green-50 hover:text-[#25C95F]">
+            <Link href="/profile/security" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 transition hover:bg-green-50 hover:text-[#25C95F]">
               <Settings size={18} className="text-[#25C95F]" />
               Pengaturan
             </Link>

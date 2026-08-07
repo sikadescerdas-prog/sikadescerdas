@@ -93,7 +93,7 @@ export default function FormLogin() {
             <span>Ingat saya</span>
           </label>
           <Link
-            href="/forgot-password"
+            href="/login"
             className="text-sm text-[#25C95F] hover:underline"
           >
             Lupa Password?
@@ -110,7 +110,7 @@ export default function FormLogin() {
         </button>
 
         {/* OR DIVIDER */}
-        <div className="flex items-center gap-3 py-1">
+        <div className="hidden flex items-center gap-3 py-1">
           <div className="h-px flex-1 bg-slate-100" />
           <span className="text-xs text-slate-400">OR</span>
           <div className="h-px flex-1 bg-slate-100" />
@@ -121,7 +121,7 @@ export default function FormLogin() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={isGoogleLoading}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-green-300 bg-white py-3 text-sm font-medium text-slate-700 shadow-sm transition-all hover:bg-green-50 hover:shadow-md active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+          className="hidden flex w-full items-center justify-center gap-3 rounded-xl border border-green-300 bg-white py-3 text-sm font-medium text-slate-700 shadow-sm transition-all hover:bg-green-50 hover:shadow-md active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Image
             src="https://www.google.com/favicon.ico"

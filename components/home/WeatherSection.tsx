@@ -23,8 +23,9 @@ import {
 import type { WeatherAPIResponse } from "@/modules/weather/types/weather.types";
 
 export default function WeatherSection() {
+  const [mounted, setMounted] = useState(false);
   const [weather, setWeather] = useState<WeatherAPIResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchWeather = async () => {
     try {
@@ -38,8 +39,18 @@ export default function WeatherSection() {
   };
 
   useEffect(() => {
+    setMounted(true);
     fetchWeather();
   }, []);
+
+  // Mencegah perbedaan markup SSR dan Client saat pertama kali render
+  if (!mounted) {
+    return (
+      <div className="relative overflow-hidden rounded-3xl p-6 shadow-xl border border-white/40 backdrop-blur-xl bg-gradient-to-br from-yellow-100 via-white to-orange-50 min-h-[250px] flex items-center justify-center">
+        <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
   const current = weather?.current;
   const floodRisk = current ? calculateFloodRisk(current) : "LOW";
@@ -49,7 +60,6 @@ export default function WeatherSection() {
     const c = cond?.toLowerCase() || "";
     const base = "h-16 w-16 drop-shadow-xl transition-all duration-500";
 
-    // ⛈️ Petir
     if (c.includes("petir") || c.includes("badai")) {
       return (
         <div className="relative">
@@ -59,7 +69,6 @@ export default function WeatherSection() {
       );
     }
 
-    // 🌧️ Hujan
     if (c.includes("hujan")) {
       return (
         <div className="relative">
@@ -69,7 +78,6 @@ export default function WeatherSection() {
       );
     }
 
-    // 🌤️ Cerah Berawan
     if (c.includes("cerah berawan") || c.includes("berawan")) {
       return (
         <div className="relative flex items-center justify-center">
@@ -81,7 +89,6 @@ export default function WeatherSection() {
       );
     }
 
-    // ☁️ Mendung
     if (c.includes("awan") || c.includes("mendung")) {
       return (
         <div className="animate-cloud-float">
@@ -90,7 +97,6 @@ export default function WeatherSection() {
       );
     }
 
-    // ☀️ Cerah
     return (
       <div className="relative flex items-center justify-center">
         <div className="absolute h-24 w-24 rounded-full bg-yellow-300/30 blur-3xl animate-pulse" />
@@ -100,7 +106,6 @@ export default function WeatherSection() {
     );
   };
 
-  // 🌈 BACKGROUND
   const bg = (() => {
     const c = (current?.condition || "").toLowerCase();
     if (c.includes("hujan")) return "bg-gradient-to-br from-blue-100 via-white to-blue-50";
@@ -121,8 +126,8 @@ export default function WeatherSection() {
               key={i}
               className="absolute top-0 w-[2px] h-4 bg-blue-400/40 animate-rain"
               style={{
-                left: `${Math.random() * 100}%`,
-                animationDuration: `${0.6 + Math.random()}s`,
+                left: `${(i * 4) % 100}%`,
+                animationDuration: `${0.6 + (i % 5) * 0.1}s`,
               }}
             />
           ))}
@@ -139,7 +144,6 @@ export default function WeatherSection() {
             </span>
           </h3>
 
-          {/* LOCATION + INFO */}
           <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
             <MapPin className="h-3.5 w-3.5 text-red-500" />
             <span className="font-medium text-gray-700">{weather?.location || "Desa Danasari"}</span>
@@ -153,6 +157,7 @@ export default function WeatherSection() {
           <a
             href="https://www.bmkg.go.id/cuaca/prakiraan-cuaca/33.03.17.2006"
             target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-1 rounded-xl bg-blue-400 px-3 py-1.5 text-xs font-medium text-white shadow-md hover:bg-blue-700 hover:scale-105 transition"
           >
             <ExternalLink className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
@@ -162,7 +167,7 @@ export default function WeatherSection() {
           <button
             onClick={fetchWeather}
             disabled={loading}
-            className="flex items-center gap-1 rounded-xl bg-white px-3 py-1.5 text-xs font-medium text-green-700 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-1 rounded-xl bg-white px-3 py-1.5 text-xs font-medium text-green-700 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
           >
             <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
             <span className="hidden md:inline">Refresh</span>

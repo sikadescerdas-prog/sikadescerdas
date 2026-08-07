@@ -5,6 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -33,19 +34,19 @@ model profiles {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model users {
-  id            String        @id @db.VarChar(50)
-  email         String        @unique @db.VarChar(100)
-  username      String        @unique @db.VarChar(50)
-  password_hash String
-  role          String        @default("user") @db.VarChar(20)
-  is_active     Boolean       @default(true)
-  last_login_at DateTime?     @db.Timestamp(6)
-  created_at    DateTime      @default(now()) @db.Timestamp(6)
-  updated_at    DateTime      @default(now()) @db.Timestamp(6)
-  literatures   literatures[]
-  news          news[]
-  profiles      profiles?
-  stores        stores?
+  id              String        @id @db.VarChar(50)
+  email           String        @unique @db.VarChar(100)
+  username        String        @unique @db.VarChar(50)
+  password_hash   String
+  role            String        @default("user") @db.VarChar(20)
+  is_active       Boolean       @default(true)
+  last_login_at   DateTime?     @db.Timestamp(6)
+  created_at      DateTime      @default(now()) @db.Timestamp(6)
+  updated_at      DateTime      @default(now()) @db.Timestamp(6)
+  literatures     literatures[]
+  news            news[]
+  profiles        profiles?
+  stores          stores?
 
   @@index([is_active], map: "idx_users_active")
   @@index([role], map: "idx_users_role")
@@ -78,20 +79,20 @@ model village_structure_periods {
 
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model village_structure_positions {
-  id                                BigInt                        @id @default(autoincrement())
-  category_id                       BigInt
-  group_id                          BigInt?
-  parent_id                         BigInt?
-  name                              String                        @db.VarChar(100)
-  is_multiple                       Boolean?                      @default(false)
-  is_active                         Boolean?                      @default(true)
-  created_at                        DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                        DateTime?                     @default(now()) @db.Timestamp(6)
-  village_structure_categories      village_structure_categories  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_category")
-  village_structure_groups          village_structure_groups?     @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_group")
-  village_structure_positions       village_structure_positions?  @relation("village_structure_positionsTovillage_structure_positions", fields: [parent_id], references: [id], onUpdate: NoAction, map: "fk_position_parent")
-  other_village_structure_positions village_structure_positions[] @relation("village_structure_positionsTovillage_structure_positions")
-  village_structures                village_structures[]
+  id                                  BigInt                        @id @default(autoincrement())
+  category_id                         BigInt
+  group_id                            BigInt?
+  parent_id                           BigInt?
+  name                                String                        @db.VarChar(100)
+  is_multiple                         Boolean?                      @default(false)
+  is_active                           Boolean?                      @default(true)
+  created_at                          DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime?                     @default(now()) @db.Timestamp(6)
+  village_structure_categories        village_structure_categories  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_category")
+  village_structure_groups            village_structure_groups?     @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_position_group")
+  village_structure_positions         village_structure_positions?  @relation("village_structure_positionsTovillage_structure_positions", fields: [parent_id], references: [id], onUpdate: NoAction, map: "fk_position_parent")
+  other_village_structure_positions   village_structure_positions[] @relation("village_structure_positionsTovillage_structure_positions")
+  village_structures                  village_structures[]
 
   @@index([parent_id], map: "idx_position_parent")
   @@index([category_id], map: "idx_position_category")
@@ -99,23 +100,23 @@ model village_structure_positions {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model village_structures {
-  id                          BigInt                      @id @default(autoincrement())
+  id                          BigInt                    @id @default(autoincrement())
   village_id                  BigInt
   period_id                   BigInt
   position_id                 BigInt
-  full_name                   String                      @db.VarChar(100)
-  gender                      String?                     @db.VarChar(10)
+  full_name                   String                    @db.VarChar(100)
+  gender                      String?                   @db.VarChar(10)
   photo_url                   String?
-  photo_public_id             String?                     @db.VarChar(255)
-  phone                       String?                     @db.VarChar(20)
-  email                       String?                     @db.VarChar(100)
+  photo_public_id             String?                   @db.VarChar(255)
+  phone                       String?                   @db.VarChar(20)
+  email                       String?                   @db.VarChar(100)
   address                     String?
-  is_active                   Boolean?                    @default(true)
-  created_at                  DateTime?                   @default(now()) @db.Timestamp(6)
-  updated_at                  DateTime?                   @default(now()) @db.Timestamp(6)
-  village_structure_periods   village_structure_periods   @relation(fields: [period_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_period")
+  is_active                   Boolean?                  @default(true)
+  created_at                  DateTime?                 @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                 @default(now()) @db.Timestamp(6)
+  village_structure_periods   village_structure_periods @relation(fields: [period_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_period")
   village_structure_positions village_structure_positions @relation(fields: [position_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_position")
-  villages                    villages                    @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_village")
+  villages                    villages                  @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_village")
 
   @@unique([village_id, period_id, position_id, full_name], map: "uq_structure_member")
   @@index([period_id], map: "idx_structure_period")
@@ -167,13 +168,13 @@ model villages {
 }
 
 model village_structure_groups {
-  id                           BigInt                        @id @default(autoincrement())
+  id                           BigInt                       @id @default(autoincrement())
   category_id                  BigInt
-  name                         String                        @db.VarChar(100)
-  is_active                    Boolean?                      @default(true)
-  created_at                   DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                   DateTime?                     @default(now()) @db.Timestamp(6)
-  village_structure_categories village_structure_categories  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_group_category")
+  name                         String                       @db.VarChar(100)
+  is_active                    Boolean?                     @default(true)
+  created_at                   DateTime?                    @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                    @default(now()) @db.Timestamp(6)
+  village_structure_categories village_structure_categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_group_category")
   village_structure_positions  village_structure_positions[]
 
   @@unique([category_id, name])
@@ -326,7 +327,7 @@ model news {
   is_active           Boolean       @default(true)
   created_at          DateTime      @default(now()) @db.Timestamp(6)
   updated_at          DateTime      @default(now()) @db.Timestamp(6)
-  users               users?        @relation(fields: [author_id], references: [id], onUpdate: NoAction, map: "fk_news_author")
+  users               users?        @relation(fields: [author_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_news_author")
   villages            villages      @relation(fields: [village_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_news_village")
   news_images         news_images[]
   news_links          news_links[]
@@ -367,24 +368,24 @@ model literature_links {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model literatures {
-  id                    BigInt                 @id @default(autoincrement())
-  author_id             String                 @db.VarChar(50)
-  type                  String                 @db.VarChar(20)
-  category_id           BigInt?
-  title                 String                 @db.VarChar(255)
-  slug                  String                 @unique @db.VarChar(255)
-  description           String?
-  content               String?
-  file_url              String?
-  file_public_id        String?                @db.VarChar(255)
-  book_url              String?
-  thumbnail_url         String?
-  thumbnail_public_id   String?                @db.VarChar(255)
-  is_active             Boolean                @default(true)
-  created_at            DateTime               @default(now()) @db.Timestamp(6)
-  updated_at            DateTime               @default(now()) @db.Timestamp(6)
-  literature_links      literature_links[]
-  users                 users                  @relation(fields: [author_id], references: [id], onUpdate: NoAction, map: "fk_literatures_author")
+  id                  BigInt                @id @default(autoincrement())
+  author_id           String?               @db.VarChar(50)
+  type                String                @db.VarChar(20)
+  category_id         BigInt?
+  title               String                @db.VarChar(255)
+  slug                String                @unique @db.VarChar(255)
+  description         String?
+  content             String?
+  file_url            String?
+  file_public_id      String?               @db.VarChar(255)
+  book_url            String?
+  thumbnail_url       String?
+  thumbnail_public_id String?               @db.VarChar(255)
+  is_active           Boolean               @default(true)
+  created_at          DateTime              @default(now()) @db.Timestamp(6)
+  updated_at          DateTime              @default(now()) @db.Timestamp(6)
+  literature_links    literature_links[]
+  users               users?                @relation(fields: [author_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_literatures_author")
   literature_categories literature_categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_literatures_category")
 
   @@index([is_active], map: "idx_literatures_active")

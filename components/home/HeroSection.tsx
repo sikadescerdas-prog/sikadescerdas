@@ -35,7 +35,7 @@ export default function HeroSection({ village }: HeroSectionProps) {
     { title: "Sejahtera", desc: "Desa Untuk Semua", icon: HandHeart },
   ];
 
-  const getVillageName = () => village?.name || "Nama Desa";
+  const getVillageName = () => village?.name || "Desa Danasari";
   const getVillage = () => village?.name || "Danasari";
   const getDistrict = () => village?.district || "Kec. Karangjambu";
   const getRegency = () => village?.regency || "Kab. Purbalingga";
