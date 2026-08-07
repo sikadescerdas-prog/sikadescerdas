@@ -20,7 +20,7 @@ function serializeBigInt<T>(data: T): T {
 async function createDefaultVillage() {
   return prisma.villages.create({
     data: {
-      name: "Desa",
+      name: "Danasari",
     },
   });
 }

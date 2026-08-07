@@ -36,7 +36,7 @@ export default function NavbarAdd({ user }: NavbarAddProps) {
   }
 
   if (pathname.startsWith("/news") && isAdmin) {
-    href = "/dashboard/news/form";
+    href = "/dashboard/news";
     title = "Tambah Berita";
   }
 
