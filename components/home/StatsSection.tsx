@@ -2,6 +2,7 @@
 "use client";
 
 import { Users, Store, School, MapPin, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import type { HomeStatistics } from "@/modules/home/types/home.types";
 
 interface Props {
@@ -18,6 +19,7 @@ export default function StatsSection({ statistics }: Props) {
       icon: Users,
       gradient: "from-emerald-400 via-green-500 to-green-700",
       badge: "Demografi",
+      href: "/population",
     },
     {
       title: "UMKM",
@@ -27,6 +29,7 @@ export default function StatsSection({ statistics }: Props) {
       icon: Store,
       gradient: "from-green-400 via-teal-500 to-emerald-700",
       badge: "Ekonomi",
+      href: "/store", 
     },
     {
       title: "Fasilitas",
@@ -36,6 +39,7 @@ export default function StatsSection({ statistics }: Props) {
       icon: School,
       gradient: "from-blue-400 via-cyan-500 to-blue-700",
       badge: "Layanan",
+      href: "/potential",
     },
     {
       title: "Wilayah",
@@ -45,6 +49,7 @@ export default function StatsSection({ statistics }: Props) {
       icon: MapPin,
       gradient: "from-orange-400 via-red-500 to-red-700",
       badge: "Administrasi",
+      href: "/village",
     },
   ];
 
@@ -61,7 +66,7 @@ export default function StatsSection({ statistics }: Props) {
             {/* gradient border */}
             <div className={`absolute inset-0 rounded-[2rem] bg-gradient-to-br ${item.gradient} opacity-0 transition duration-500 group-hover:opacity-100`} />
 
-            <div className="relative h-full rounded-[2rem] bg-white p-6">
+            <Link href={item.href} className="relative block h-full rounded-[2rem] bg-white p-6">
               {/* glow */}
               <div className={`absolute -right-12 -top-12 h-40 w-40 rounded-full bg-gradient-to-br ${item.gradient} opacity-10 blur-3xl transition duration-500 group-hover:opacity-30`} />
 
@@ -106,7 +111,7 @@ export default function StatsSection({ statistics }: Props) {
               <div className="mt-6 h-1 overflow-hidden rounded-full bg-gray-100">
                 <div className={`h-full w-1/2 rounded-full bg-gradient-to-r ${item.gradient} transition-all duration-700 group-hover:w-full`} />
               </div>
-            </div>
+            </Link>
           </div>
         );
       })}

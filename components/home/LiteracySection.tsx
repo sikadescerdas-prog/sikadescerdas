@@ -30,7 +30,7 @@ export default function LiteracySection({ total = 0, books = 0, articles = 0 }: 
     {
       title: "Smart Library",
       subtitle: "Koleksi Buku Digital",
-      href: "/literasi",
+      href: "/literature",
       icon: <LibraryBig className="h-5 w-5 lg:h-7 lg:w-7" />,
       gradient: "from-violet-400 via-fuchsia-500 to-pink-400",
       badge: `${books} Buku`,
@@ -38,7 +38,7 @@ export default function LiteracySection({ total = 0, books = 0, articles = 0 }: 
     {
       title: "Edukasi Desa",
       subtitle: "Artikel & Pembelajaran",
-      href: "/literasi?type",
+      href: "/literature",
       icon: <Newspaper className="h-5 w-5 lg:h-7 lg:w-7" />,
       gradient: "from-sky-400 via-blue-500 to-indigo-400",
       badge: `${articles} Artikel`,
