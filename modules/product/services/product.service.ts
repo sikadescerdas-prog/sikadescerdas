@@ -4,6 +4,24 @@ import type { Product, ProductFilter, ProductCreatePayload, ProductListResponse 
 
 const API_URL = "/api/product";
 
+// Helper internal untuk membaca dan memparsing response API dengan aman
+async function parseResponse(res: Response, defaultErrorMessage: string) {
+  const text = await res.text();
+  let json: any = {};
+
+  try {
+    json = JSON.parse(text);
+  } catch {
+    json = { message: text };
+  }
+
+  if (!res.ok) {
+    throw new Error(json.message || text || defaultErrorMessage);
+  }
+
+  return json.data ?? json;
+}
+
 export async function getProducts(filter: ProductFilter = {}): Promise<ProductListResponse> {
   const params = new URLSearchParams();
   if (filter.search) params.set("search", filter.search);
@@ -12,20 +30,12 @@ export async function getProducts(filter: ProductFilter = {}): Promise<ProductLi
   params.set("limit", String(filter.limit ?? 10));
 
   const res = await fetch(`${API_URL}?${params.toString()}`, { cache: "no-store" });
-  const json = await res.json();
-
-  if (!res.ok) throw new Error(json.message ?? "Gagal mengambil data produk");
-
-  return json;
+  return parseResponse(res, "Gagal mengambil data produk");
 }
 
 export async function getProductById(id: string): Promise<Product> {
   const res = await fetch(`${API_URL}/${id}`, { cache: "no-store" });
-  const json = await res.json();
-
-  if (!res.ok) throw new Error(json.message ?? "Gagal mengambil detail produk");
-
-  return json.data ?? json;
+  return parseResponse(res, "Gagal mengambil detail produk");
 }
 
 export async function createProduct(data: ProductCreatePayload): Promise<Product> {
@@ -38,22 +48,7 @@ export async function createProduct(data: ProductCreatePayload): Promise<Product
   });
 
   console.log("CREATE STATUS:", res.status);
-  const text = await res.text();
-  console.log("CREATE RESPONSE:", text);
-
-  let json: any = {};
-  try {
-    json = JSON.parse(text);
-  } catch {
-    json = { message: text };
-  }
-
-  if (!res.ok) {
-    console.error("CREATE PRODUCT API ERROR:", json);
-    throw new Error(json.message ?? "Gagal menambah produk");
-  }
-
-  return json.data ?? json;
+  return parseResponse(res, "Gagal menambah produk");
 }
 
 export async function updateProduct(id: string, data: Partial<ProductCreatePayload>): Promise<Product> {
@@ -63,38 +58,13 @@ export async function updateProduct(id: string, data: Partial<ProductCreatePaylo
     body: JSON.stringify(data),
   });
 
-  const text = await res.text();
   console.log("UPDATE PRODUCT STATUS:", res.status);
-  console.log("UPDATE PRODUCT RESPONSE:", text);
-
-  let json: any = {};
-  try {
-    json = JSON.parse(text);
-  } catch {
-    json = {};
-  }
-
-  if (!res.ok) {
-    throw new Error(json.message ?? text ?? "Gagal memperbarui produk");
-  }
-
-  return json.data ?? json;
+  return parseResponse(res, "Gagal memperbarui produk");
 }
 
 export async function deleteProduct(id: string): Promise<void> {
   const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  const text = await res.text();
   console.log("DELETE PRODUCT STATUS:", res.status);
-  console.log("DELETE PRODUCT RESPONSE:", text);
-
-  if (!res.ok) {
-    let json: any = {};
-    try {
-      json = JSON.parse(text);
-    } catch {
-      json = {};
-    }
-
-    throw new Error(json.message ?? text ?? "Gagal menghapus produk");
-  }
+  
+  await parseResponse(res, "Gagal menghapus produk");
 }

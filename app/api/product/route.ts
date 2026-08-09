@@ -206,40 +206,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const product = await prisma.$transaction(async (tx) => {
-      const createdProduct = await tx.products.create({
-        data: {
-          store_id: BigInt(storeId),
-          category_id: categoryId ? BigInt(categoryId) : null,
-          name,
-          slug,
-          description: description ?? null,
-          thumbnail_url: thumbnailUrl,
-          thumbnail_public_id: thumbnailPublicId ?? null,
-          price: Number(price ?? 0),
-          stock: Number(stock ?? 0),
-          unit: unit ?? null,
-          weight: weight ? Number(weight) : null,
-          is_featured: isFeatured ?? false,
-          is_active: isActive ?? true,
-        },
-      });
-
-      if (images?.length) {
-        await tx.product_images.createMany({
-          data: images.map((image: any) => ({
-            product_id: createdProduct.id,
-            image_url: image.url,
-            image_public_id: image.publicId ?? null,
-          })),
+    // Menambahkan opsi maxWait dan timeout agar terhindar dari error transaction timeout
+    const product = await prisma.$transaction(
+      async (tx) => {
+        const createdProduct = await tx.products.create({
+          data: {
+            store_id: BigInt(storeId),
+            category_id: categoryId ? BigInt(categoryId) : null,
+            name,
+            slug,
+            description: description ?? null,
+            thumbnail_url: thumbnailUrl,
+            thumbnail_public_id: thumbnailPublicId ?? null,
+            price: Number(price ?? 0),
+            stock: Number(stock ?? 0),
+            unit: unit ?? null,
+            weight: weight ? Number(weight) : null,
+            is_featured: isFeatured ?? false,
+            is_active: isActive ?? true,
+          },
         });
-      }
 
-      return tx.products.findUnique({
-        where: { id: createdProduct.id },
-        include: productInclude,
-      });
-    });
+        if (images?.length) {
+          await tx.product_images.createMany({
+            data: images.map((image: any) => ({
+              product_id: createdProduct.id,
+              image_url: image.url,
+              image_public_id: image.publicId ?? null,
+            })),
+          });
+        }
+
+        return tx.products.findUnique({
+          where: { id: createdProduct.id },
+          include: productInclude,
+        });
+      },
+      {
+        maxWait: 10000, // Waktu maksimal menunggu antrean koneksi (10 detik)
+        timeout: 20000, // Waktu maksimal proses transaksi berjalan (20 detik)
+      }
+    );
 
     return NextResponse.json(
       {

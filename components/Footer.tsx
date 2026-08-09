@@ -25,18 +25,18 @@ const FOOTER_DATA = {
 
 const NAVIGATION_ITEMS = [
   { label: "Beranda", href: "/", icon: Home },
-  { label: "Berita", href: "/berita", icon: Newspaper },
-  { label: "Literasi", href: "/literasi", icon: BookOpen },
+  { label: "Berita", href: "/news", icon: Newspaper },
+  { label: "Literasi", href: "/literature", icon: BookOpen },
   { label: "UMKM", href: "/store", icon: Store },
-  { label: "Galeri", href: "/galeri", icon: Images },
+  { label: "Galeri", href: "#", icon: Images },
 ];
 
 const VILLAGE_ITEMS = [
-  { label: "Profil Desa", href: "/profil", icon: Info },
+  { label: "Profil Desa", href: "/village", icon: Info },
   { label: "Visi & Misi", href: "/visi-misi", icon: Target },
-  { label: "Struktur Desa", href: "/struktur", icon: Users },
-  { label: "Lembaga Desa", href: "/lembaga", icon: Building },
-  { label: "Potensi Desa", href: "/potensi", icon: Home },
+  { label: "Struktur Desa", href: "/stucture", icon: Users },
+  { label: "Populasi Desa", href: "/population", icon: Building },
+  { label: "Potensi Desa", href: "/potential", icon: Home },
 ];
 
 const MENU_CLASS = "group relative flex items-center gap-2 rounded-lg py-2.5 text-sm text-green-50 transition-all duration-300 hover:translate-x-1 hover:text-white";
@@ -48,7 +48,7 @@ export default function Footer() {
 
   if (shouldHide) return null;
 
-  const isSlim = pathname === "/profile" || pathname.startsWith("/profile/") || pathname.startsWith("/store/");
+  const isSlim = pathname === "/profile" || pathname.startsWith("/profile/") || pathname.startsWith("/store/") || pathname.startsWith("/product/");
 
   if (isSlim) {
     return (
