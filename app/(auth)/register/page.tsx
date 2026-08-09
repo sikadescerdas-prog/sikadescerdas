@@ -1,4 +1,4 @@
-// app/register/page.tsx
+// app/(auth)/register/page.tsx
 
 import LayoutAuth from "@/components/auth/LayoutAuth";
 import FormRegister from "@/components/auth/FormRegister";

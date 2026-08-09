@@ -8,15 +8,7 @@ import ProductInfo from "./category/ProductInfo";
 import type { SortOption } from "@/shared/types/filter.types";
 
 interface StoreCategory { id: string; name: string; }
-
-interface CategoryStoreProps {
-  totalProduk: number;
-  categories: StoreCategory[];
-  selectedCategory: string;
-  selectedSort: SortOption;
-  onSort: (value: SortOption) => void;
-  onCategoryChange?: (categoryName: string) => void;
-}
+interface CategoryStoreProps { totalProduk: number; categories: StoreCategory[]; selectedCategory: string; selectedSort: SortOption; onSort: (value: SortOption) => void; onCategoryChange?: (categoryName: string) => void; }
 
 export default function CategoryStore({ totalProduk, categories, selectedCategory, selectedSort, onSort, onCategoryChange }: CategoryStoreProps) {
   const hasFilter = selectedCategory !== "semua" || selectedSort !== "default";
@@ -26,14 +18,8 @@ export default function CategoryStore({ totalProduk, categories, selectedCategor
     onCategoryChange?.(value);
   }
 
-  function handleSort(value: SortOption) {
-    onSort(value);
-  }
-
-  function handleReset() {
-    onCategoryChange?.("semua");
-    onSort("default");
-  }
+  function handleSort(value: SortOption) { onSort(value); }
+  function handleReset() { onCategoryChange?.("semua"); onSort("default"); }
 
   return (
     <>

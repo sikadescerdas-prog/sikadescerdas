@@ -2,24 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  CloudSun,
-  CloudRain,
-  Cloud,
-  Wind,
-  Droplets,
-  RefreshCw,
-  Radio,
-  MapPin,
-  CloudLightning,
-  CloudSunRain,
-  Sun,
-  ExternalLink,
-} from "lucide-react";
-import {
-  calculateFloodRisk,
-  calculateLandslideRisk,
-} from "@/modules/weather/types/weather.types";
+import { CloudSun, CloudRain, Cloud, Wind, Droplets, RefreshCw, Radio, MapPin, CloudLightning, CloudSunRain, Sun, ExternalLink } from "lucide-react";
+import { calculateFloodRisk, calculateLandslideRisk } from "@/modules/weather/types/weather.types";
 import type { WeatherAPIResponse } from "@/modules/weather/types/weather.types";
 
 export default function WeatherSection() {
@@ -43,7 +27,6 @@ export default function WeatherSection() {
     fetchWeather();
   }, []);
 
-  // Mencegah perbedaan markup SSR dan Client saat pertama kali render
   if (!mounted) {
     return (
       <div className="relative overflow-hidden rounded-3xl p-6 shadow-xl border border-white/40 backdrop-blur-xl bg-gradient-to-br from-yellow-100 via-white to-orange-50 min-h-[250px] flex items-center justify-center">
@@ -61,49 +44,22 @@ export default function WeatherSection() {
     const base = "h-16 w-16 drop-shadow-xl transition-all duration-500";
 
     if (c.includes("petir") || c.includes("badai")) {
-      return (
-        <div className="relative">
-          <CloudLightning className={`${base} text-indigo-500 animate-pulse`} />
-          <div className="absolute inset-0 bg-yellow-300/20 blur-xl animate-flash rounded-full" />
-        </div>
-      );
+      return (<div className="relative"><CloudLightning className={`${base} text-indigo-500 animate-pulse`} /><div className="absolute inset-0 bg-yellow-300/20 blur-xl animate-flash rounded-full" /></div>);
     }
 
     if (c.includes("hujan")) {
-      return (
-        <div className="relative">
-          <CloudSunRain className={`${base} text-blue-500 animate-weather-float`} />
-          <span className="absolute -bottom-2 left-2 w-2 h-2 bg-blue-400 rounded-full animate-ping" />
-        </div>
-      );
+      return (<div className="relative"><CloudSunRain className={`${base} text-blue-500 animate-weather-float`} /><span className="absolute -bottom-2 left-2 w-2 h-2 bg-blue-400 rounded-full animate-ping" /></div>);
     }
 
     if (c.includes("cerah berawan") || c.includes("berawan")) {
-      return (
-        <div className="relative flex items-center justify-center">
-          <div className="absolute h-20 w-20 rounded-full bg-yellow-300/30 blur-3xl animate-pulse" />
-          <div className="sun-rays" />
-          <Sun className="h-14 w-14 text-yellow-500 animate-sun-spin" />
-          <Cloud className="absolute bottom-0 right-0 h-8 w-8 text-white animate-cloud-float" />
-        </div>
-      );
+      return (<div className="relative flex items-center justify-center"><div className="absolute h-20 w-20 rounded-full bg-yellow-300/30 blur-3xl animate-pulse" /><div className="sun-rays" /><Sun className="h-14 w-14 text-yellow-500 animate-sun-spin" /><Cloud className="absolute bottom-0 right-0 h-8 w-8 text-white animate-cloud-float" /></div>);
     }
 
     if (c.includes("awan") || c.includes("mendung")) {
-      return (
-        <div className="animate-cloud-float">
-          <Cloud className={`${base} text-gray-400`} />
-        </div>
-      );
+      return (<div className="animate-cloud-float"><Cloud className={`${base} text-gray-400`} /></div>);
     }
 
-    return (
-      <div className="relative flex items-center justify-center">
-        <div className="absolute h-24 w-24 rounded-full bg-yellow-300/30 blur-3xl animate-pulse" />
-        <div className="sun-rays" />
-        <Sun className={`${base} text-yellow-500 animate-sun-spin`} />
-      </div>
-    );
+    return (<div className="relative flex items-center justify-center"><div className="absolute h-24 w-24 rounded-full bg-yellow-300/30 blur-3xl animate-pulse" /><div className="sun-rays" /><Sun className={`${base} text-yellow-500 animate-sun-spin`} /></div>);
   };
 
   const bg = (() => {
@@ -115,33 +71,19 @@ export default function WeatherSection() {
 
   return (
     <div className={`relative overflow-hidden rounded-3xl p-6 shadow-xl border border-white/40 backdrop-blur-xl transition-all duration-500 ${bg}`}>
-      {/* glow */}
       <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),transparent)]" />
 
-      {/* 🌧️ rain effect */}
       {(current?.condition || "").toLowerCase().includes("hujan") && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {Array.from({ length: 25 }).map((_, i) => (
-            <span
-              key={i}
-              className="absolute top-0 w-[2px] h-4 bg-blue-400/40 animate-rain"
-              style={{
-                left: `${(i * 4) % 100}%`,
-                animationDuration: `${0.6 + (i % 5) * 0.1}s`,
-              }}
-            />
-          ))}
+          {Array.from({ length: 25 }).map((_, i) => (<span key={i} className="absolute top-0 w-[2px] h-4 bg-blue-400/40 animate-rain" style={{ left: `${(i * 4) % 100}%`, animationDuration: `${0.6 + (i % 5) * 0.1}s` }} />))}
         </div>
       )}
 
-      {/* HEADER */}
       <div className="relative flex items-center justify-between">
         <div>
           <h3 className="flex items-center gap-4 text-xl font-bold text-gray-900">
             <span className="flex items-center gap-2">🌤 Cuaca Desa</span>
-            <span className="flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
-              <Radio className="h-3 w-3 animate-pulse" /> LIVE
-            </span>
+            <span className="flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600"><Radio className="h-3 w-3 animate-pulse" /> LIVE</span>
           </h3>
 
           <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
@@ -152,52 +94,28 @@ export default function WeatherSection() {
           </div>
         </div>
 
-        {/* ACTION */}
         <div className="flex items-center gap-2">
-          <a
-            href="https://www.bmkg.go.id/cuaca/prakiraan-cuaca/33.03.17.2006"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 rounded-xl bg-blue-400 px-3 py-1.5 text-xs font-medium text-white shadow-md hover:bg-blue-700 hover:scale-105 transition"
-          >
+          <a href="https://www.bmkg.go.id/cuaca/prakiraan-cuaca/33.03.17.2006" target="_blank" rel="noreferrer" className="flex items-center gap-1 rounded-xl bg-blue-400 px-3 py-1.5 text-xs font-medium text-white shadow-md hover:bg-blue-700 hover:scale-105 transition">
             <ExternalLink className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
             <span className="hidden md:inline">Detail</span>
           </a>
 
-          <button
-            onClick={fetchWeather}
-            disabled={loading}
-            className="flex items-center gap-1 rounded-xl bg-white px-3 py-1.5 text-xs font-medium text-green-700 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-          >
+          <button onClick={fetchWeather} disabled={loading} className="flex items-center gap-1 rounded-xl bg-white px-3 py-1.5 text-xs font-medium text-green-700 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50">
             <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
             <span className="hidden md:inline">Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* RISK */}
       {(floodRisk !== "LOW" || landslideRisk !== "LOW") && (
         <div className="hidden relative mt-3 flex gap-2">
-          {floodRisk !== "LOW" && (
-            <span className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">
-              ⚠️ Banjir: {floodRisk}
-            </span>
-          )}
-          {landslideRisk !== "LOW" && (
-            <span className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-700">
-              ⚠️ Longsor: {landslideRisk}
-            </span>
-          )}
+          {floodRisk !== "LOW" && (<span className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">⚠️ Banjir: {floodRisk}</span>)}
+          {landslideRisk !== "LOW" && (<span className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-700">⚠️ Longsor: {landslideRisk}</span>)}
         </div>
       )}
 
-      {/* MAIN */}
       <div className="relative mt-8 flex items-center gap-5">
-        {loading ? (
-          <RefreshCw className="h-16 w-16 animate-spin text-gray-300" />
-        ) : (
-          getWeatherIcon(current?.condition || "")
-        )}
+        {loading ? (<RefreshCw className="h-16 w-16 animate-spin text-gray-300" />) : (getWeatherIcon(current?.condition || ""))}
 
         <div>
           <div className="text-5xl font-black text-gray-900 relative">
@@ -208,21 +126,14 @@ export default function WeatherSection() {
         </div>
       </div>
 
-      {/* STATS */}
       <div className="relative mt-6 grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-white/70 p-4 backdrop-blur">
-          <div className="flex items-center gap-1 text-gray-500">
-            <Droplets className="h-4 w-4" />
-            <span className="text-xs">Kelembaban</span>
-          </div>
+          <div className="flex items-center gap-1 text-gray-500"><Droplets className="h-4 w-4" /><span className="text-xs">Kelembaban</span></div>
           <p className="text-lg font-bold">{current?.humidity ?? "--"}%</p>
         </div>
 
         <div className="rounded-xl bg-white/70 p-4 backdrop-blur">
-          <div className="flex items-center gap-1 text-gray-500">
-            <Wind className="h-4 w-4" />
-            <span className="text-xs">Angin</span>
-          </div>
+          <div className="flex items-center gap-1 text-gray-500"><Wind className="h-4 w-4" /><span className="text-xs">Angin</span></div>
           <p className="text-lg font-bold">{current?.windSpeed ?? "--"} km/jam</p>
         </div>
       </div>

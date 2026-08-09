@@ -7,10 +7,7 @@ import Link from "next/link";
 import { FaBox, FaMapMarkerAlt } from "react-icons/fa";
 import type { ProductWithStore } from "@/modules/product/hooks/useProductList";
 
-interface ProductCardProps {
-  product: ProductWithStore;
-  showStoreName?: boolean;
-}
+interface ProductCardProps { product: ProductWithStore; showStoreName?: boolean; }
 
 export default function ProductCard({ product, showStoreName = true }: ProductCardProps) {
   const formatPrice = (price: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(price);
@@ -33,13 +30,7 @@ export default function ProductCard({ product, showStoreName = true }: ProductCa
   return (
     <div className="group overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:shadow-xl">
       <Link href={productUrl} className="relative block aspect-[4/3] overflow-hidden bg-slate-50">
-        {product.thumbnailUrl ? (
-          <img src={product.thumbnailUrl} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <FaBox size={40} className="text-slate-300" />
-          </div>
-        )}
+        {product.thumbnailUrl ? (<img src={product.thumbnailUrl} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />) : (<div className="flex h-full items-center justify-center"><FaBox size={40} className="text-slate-300" /></div>)}
         <div className={`absolute left-3 top-3 rounded-full border px-3 py-1 text-[10px] font-bold uppercase ${categoryColor}`}>{categoryName}</div>
       </Link>
 
@@ -50,20 +41,11 @@ export default function ProductCard({ product, showStoreName = true }: ProductCa
         {showStoreName && product.storeName && (
           <Link href={storeUrl} className="mt-3 flex gap-2 border-t pt-3">
             <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-slate-100 bg-white">
-              {product.logoUrl ? (
-                <Image src={product.logoUrl} alt={product.storeName} fill className="object-cover" unoptimized />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs font-bold text-slate-400">T</div>
-              )}
+              {product.logoUrl ? (<Image src={product.logoUrl} alt={product.storeName} fill className="object-cover" unoptimized />) : (<div className="flex h-full w-full items-center justify-center text-xs font-bold text-slate-400">T</div>)}
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-semibold text-slate-700">{product.storeName}</div>
-              {product.storeCity && (
-                <div className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-400">
-                  <FaMapMarkerAlt size={10} />
-                  {product.storeCity}
-                </div>
-              )}
+              {product.storeCity && (<div className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-400"><FaMapMarkerAlt size={10} />{product.storeCity}</div>)}
             </div>
           </Link>
         )}

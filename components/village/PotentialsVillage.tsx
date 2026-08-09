@@ -23,10 +23,7 @@ export interface FacilityItem {
   address?: string;
   link_maps?: string;
   image_url?: string;
-  village_facility_types?: {
-    name: string;
-    village_facility_categories?: { name: string; };
-  };
+  village_facility_types?: { name: string; village_facility_categories?: { name: string; }; };
 }
 
 export default function PotentialVillageCombined({ potentials, facilities }: { potentials: PotentialItem[]; facilities: FacilityItem[]; }) {
@@ -48,29 +45,21 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
     setSelectedFacilityCategory("Semua");
   };
 
-  const potentialCategories = useMemo(() => [
-    "Semua", 
-    ...Array.from(new Set(potentials.map((item) => item.village_potential_categories?.name).filter(Boolean)))
-  ], [potentials]);
+  const potentialCategories = useMemo(() => ["Semua", ...Array.from(new Set(potentials.map((item) => item.village_potential_categories?.name).filter(Boolean)))], [potentials]);
 
   const filteredPotentials = useMemo(() => {
     return potentials.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            (item.address && item.address.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || (item.address && item.address.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesCategory = selectedPotentialCategory === "Semua" || item.village_potential_categories?.name === selectedPotentialCategory;
       return matchesSearch && matchesCategory;
     });
   }, [potentials, searchQuery, selectedPotentialCategory]);
 
-  const facilityCategories = useMemo(() => [
-    "Semua", 
-    ...Array.from(new Set(facilities.map((item) => item.village_facility_types?.village_facility_categories?.name).filter(Boolean)))
-  ], [facilities]);
+  const facilityCategories = useMemo(() => ["Semua", ...Array.from(new Set(facilities.map((item) => item.village_facility_types?.village_facility_categories?.name).filter(Boolean)))], [facilities]);
 
   const filteredFacilities = useMemo(() => {
     return facilities.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            (item.address && item.address.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || (item.address && item.address.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesCategory = selectedFacilityCategory === "Semua" || item.village_facility_types?.village_facility_categories?.name === selectedFacilityCategory;
       return matchesSearch && matchesCategory;
     });
@@ -84,24 +73,9 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
         <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition duration-500"></div>
         <div className="relative bg-white/90 backdrop-blur-xl p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-lg flex items-center gap-3 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#03AC03]/30 focus-within:border-[#03AC03]">
           <Search className="w-5 h-5 text-emerald-600 ml-2 shrink-0 animate-pulse" />
-          <input
-            type="text"
-            placeholder="Eksplorasi seluruh potensi & fasilitas desa..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-1 bg-transparent text-sm font-medium focus:outline-none text-slate-800 placeholder:text-slate-400"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery("")} className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-all cursor-pointer active:scale-90" title="Hapus pencarian">
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-          {isFiltered && (
-            <button onClick={handleResetFilter} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer active:scale-95" title="Reset semua filter">
-              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-          )}
+          <input type="text" placeholder="Eksplorasi seluruh potensi & fasilitas desa..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full py-1 bg-transparent text-sm font-medium focus:outline-none text-slate-800 placeholder:text-slate-400" />
+          {searchQuery && (<button onClick={() => setSearchQuery("")} className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-all cursor-pointer active:scale-90" title="Hapus pencarian"><X className="w-3.5 h-3.5" /></button>)}
+          {isFiltered && (<button onClick={handleResetFilter} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer active:scale-95" title="Reset semua filter"><RotateCcw className="w-3.5 h-3.5 text-slate-500" /><span className="hidden sm:inline">Reset</span></button>)}
         </div>
       </div>
 
@@ -122,15 +96,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
 
           <div ref={potentialCategoryRef} className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none select-none cursor-grab active:cursor-grabbing">
             {potentialCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedPotentialCategory(cat as string)}
-                className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer active:scale-95 shrink-0 ${
-                  selectedPotentialCategory === cat
-                    ? "bg-[#03AC03] text-white shadow-lg shadow-emerald-500/30 scale-[1.02]"
-                    : "bg-white/80 backdrop-blur-sm border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-xs"
-                }`}
-              >
+              <button key={cat} onClick={() => setSelectedPotentialCategory(cat as string)} className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer active:scale-95 shrink-0 ${selectedPotentialCategory === cat ? "bg-[#03AC03] text-white shadow-lg shadow-emerald-500/30 scale-[1.02]" : "bg-white/80 backdrop-blur-sm border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-xs"}`}>
                 {cat}
               </button>
             ))}
@@ -141,11 +107,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
           {filteredPotentials.map((item, index) => {
             const isExpanded = !!expandedPotentialIds[item.id];
             return (
-              <div
-                key={item.id}
-                className="group bg-white rounded-3xl border border-slate-200/80 p-5 shadow-sm hover:shadow-2xl hover:border-emerald-500/30 hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between relative overflow-hidden"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
+              <div key={item.id} className="group bg-white rounded-3xl border border-slate-200/80 p-5 shadow-sm hover:shadow-2xl hover:border-emerald-500/30 hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between relative overflow-hidden" style={{ animationDelay: `${index * 50}ms` }}>
                 <div className="absolute -right-12 -top-12 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all duration-500 pointer-events-none" />
                 <div>
                   <div className="w-full h-48 rounded-2xl overflow-hidden mb-5 bg-slate-100 relative shadow-inner">
@@ -175,11 +137,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
                   )}
                 </div>
                 <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                  {item.website ? (
-                    <a href={item.website} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#03AC03] flex items-center gap-1.5 font-semibold truncate max-w-[55%] transition-colors">
-                      <Globe className="w-4 h-4 shrink-0 text-slate-400" /> Website
-                    </a>
-                  ) : <span />}
+                  {item.website ? (<a href={item.website} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#03AC03] flex items-center gap-1.5 font-semibold truncate max-w-[55%] transition-colors"><Globe className="w-4 h-4 shrink-0 text-slate-400" /> Website</a>) : <span />}
                   {item.link_maps && (
                     <a href={item.link_maps} target="_blank" rel="noopener noreferrer" className="font-bold text-[#03AC03] bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl flex items-center gap-1 transition-all group/link">
                       <span>Maps</span> 
@@ -223,15 +181,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
 
           <div ref={facilityCategoryRef} className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none select-none cursor-grab active:cursor-grabbing">
             {facilityCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedFacilityCategory(cat as string)}
-                className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer active:scale-95 shrink-0 ${
-                  selectedFacilityCategory === cat
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]"
-                    : "bg-white/85 backdrop-blur-sm border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-xs"
-                }`}
-              >
+              <button key={cat} onClick={() => setSelectedFacilityCategory(cat as string)} className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer active:scale-95 shrink-0 ${selectedFacilityCategory === cat ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-[1.02]" : "bg-white/85 backdrop-blur-sm border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-xs"}`}>
                 {cat}
               </button>
             ))}
@@ -240,11 +190,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredFacilities.map((facility, index) => (
-            <div
-              key={facility.id}
-              className="group relative rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-2xl hover:border-blue-500/30 hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-end min-h-[260px] p-5 sm:p-6"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
+            <div key={facility.id} className="group relative rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-2xl hover:border-blue-500/30 hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-end min-h-[260px] p-5 sm:p-6" style={{ animationDelay: `${index * 50}ms` }}>
               <div className="absolute inset-0 z-0">
                 <img src={facility.image_url || "/img/noimage.png"} alt={facility.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/10" />
@@ -279,9 +225,7 @@ export default function PotentialVillageCombined({ potentials, facilities }: { p
                       <span>Buka Peta</span> 
                       <ArrowUpRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                     </a>
-                  ) : (
-                    <span className="text-[11px] text-slate-300 italic">Lokasi belum disematkan</span>
-                  )}
+                  ) : (<span className="text-[11px] text-slate-300 italic">Lokasi belum disematkan</span>)}
                 </div>
               </div>
             </div>

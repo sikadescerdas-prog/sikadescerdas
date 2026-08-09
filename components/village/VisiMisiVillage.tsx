@@ -3,12 +3,7 @@
 
 import { Eye, Target, Sparkles, Quote, CheckCircle2 } from "lucide-react";
 
-interface VisiMisiVillageProps {
-  village: {
-    vision?: string | null;
-    mission?: string | null;
-  };
-}
+interface VisiMisiVillageProps { village: { vision?: string | null; mission?: string | null; }; }
 
 export default function VisiMisiVillage({ village }: VisiMisiVillageProps) {
   const vision = village.vision || "Menjadi desa yang maju, mandiri, sejahtera, serta berdaya saing melalui pembangunan berkelanjutan berbasis potensi lokal.";
@@ -25,31 +20,12 @@ export default function VisiMisiVillage({ village }: VisiMisiVillageProps) {
     <div className="w-full mx-auto group/card">
       <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white shadow-2xl shadow-green-950/5 transition-all duration-700 hover:shadow-green-950/20 hover:-translate-y-1">
         <style jsx>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
-          }
-          @keyframes pulseGlow {
-            0%, 100% { opacity: 0.35; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.15); }
-          }
-          @keyframes morphBlob {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-20px, 12px) scale(1.15); }
-            66% { transform: translate(15px, -18px) scale(0.92); }
-          }
-          @keyframes slideUp {
-            from { opacity: 0; transform: translateY(35px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes fadeRight {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes spinSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
+          @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+          @keyframes pulseGlow { 0%, 100% { opacity: 0.35; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.15); } }
+          @keyframes morphBlob { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(-20px, 12px) scale(1.15); } 66% { transform: translate(15px, -18px) scale(0.92); } }
+          @keyframes slideUp { from { opacity: 0; transform: translateY(35px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes fadeRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+          @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .blob { animation: morphBlob 8s ease-in-out infinite; }
           .float { animation: float 5s ease-in-out infinite; }
           .pulse { animation: pulseGlow 4s ease-in-out infinite; }
@@ -80,13 +56,8 @@ export default function VisiMisiVillage({ village }: VisiMisiVillageProps) {
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <div>
-              <h2 className="flex items-center gap-2 text-2xl font-black tracking-tight text-white drop-shadow-sm">
-                Visi & Misi Desa
-                <Sparkles className="h-4 w-4 animate-pulse text-green-100" />
-              </h2>
-              <p className="mt-1 text-sm font-medium text-green-50 tracking-wide">
-                Arah pembangunan dan komitmen pemerintah desa dalam mewujudkan masyarakat yang maju, mandiri, dan sejahtera.
-              </p>
+              <h2 className="flex items-center gap-2 text-2xl font-black tracking-tight text-white drop-shadow-sm">Visi & Misi Desa <Sparkles className="h-4 w-4 animate-pulse text-green-100" /></h2>
+              <p className="mt-1 text-sm font-medium text-green-50 tracking-wide">Arah pembangunan dan komitmen pemerintah desa dalam mewujudkan masyarakat yang maju, mandiri, dan sejahtera.</p>
             </div>
           </div>
         </div>

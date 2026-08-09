@@ -1,25 +1,8 @@
 // components/village/InformationVillage.tsx
-
 "use client";
 
 import React, { useState } from "react";
-import {
-  MapPin,
-  Building2,
-  Mail,
-  Phone,
-  Globe,
-  CalendarDays,
-  Landmark,
-  Sparkles,
-  Compass,
-  Maximize2,
-  ExternalLink,
-  ShieldCheck,
-  Navigation,
-  Copy,
-  Check,
-} from "lucide-react";
+import { MapPin, Building2, Mail, Phone, Globe, CalendarDays, Landmark, Sparkles, Compass, Maximize2, ExternalLink, ShieldCheck, Navigation, Copy, Check } from "lucide-react";
 
 interface AddressObject {
   fullAddress?: string;
@@ -80,14 +63,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
   const areaSize = village.areaSize ? `${village.areaSize} Ha` : "625,23 Ha";
 
   const handleCopyAddress = () => {
-    const globalScope = (typeof globalThis !== "undefined" ? globalThis : window) as unknown as {
-      navigator?: {
-        clipboard?: {
-          writeText: (text: string) => Promise<void>;
-        };
-      };
-    };
-
+    const globalScope = (typeof globalThis !== "undefined" ? globalThis : window) as unknown as { navigator?: { clipboard?: { writeText: (text: string) => Promise<void> } } };
     if (globalScope.navigator?.clipboard) {
       globalScope.navigator.clipboard.writeText(fullAddress);
       setCopied(true);
@@ -123,19 +99,9 @@ export default function InformationVillage({ village }: InformationVillageProps)
     <div className="w-full mx-auto group/card">
       <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white shadow-2xl shadow-green-950/5 transition-all duration-700 hover:shadow-green-950/20 hover:-translate-y-1">
         <style jsx>{`
-          @keyframes morphBlob {
-            0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
-            33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); }
-            66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); }
-          }
-          @keyframes floatSlow {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(3deg); }
-          }
-          @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.08); }
-          }
+          @keyframes morphBlob { 0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); } 33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); } 66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); } }
+          @keyframes floatSlow { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+          @keyframes pulseGlow { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.08); } }
           .blob-anim { animation: morphBlob 8s ease-in-out infinite; }
           .float-anim { animation: floatSlow 5s ease-in-out infinite; }
           .pulse-glow { animation: pulseGlow 4s ease-in-out infinite; }
@@ -156,9 +122,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
                   Profil Desa Danasari
                   <Sparkles className="h-4 w-4 text-green-100 animate-pulse" />
                 </h2>
-                <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">
-                  Informasi umum mengenai identitas, kontak resmi, dan lokasi geografis desa.
-                </p>
+                <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">Informasi umum mengenai identitas, kontak resmi, dan lokasi geografis desa.</p>
               </div>
             </div>
           </div>
@@ -175,13 +139,9 @@ export default function InformationVillage({ village }: InformationVillageProps)
                 <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
                   <Landmark size={18} />
                 </div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">
-                  Identitas & Wilayah Administrasi
-                </h3>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">Identitas & Wilayah Administrasi</h3>
               </div>
-              <span className="hidden sm:inline-flex text-xs font-semibold px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">
-                Data Terverifikasi
-              </span>
+              <span className="hidden sm:inline-flex text-xs font-semibold px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">Data Terverifikasi</span>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -194,17 +154,11 @@ export default function InformationVillage({ village }: InformationVillageProps)
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white border border-emerald-100/80 text-emerald-600 shadow-md transition-transform duration-300 group-hover/item:scale-110 group-hover/item:rotate-6">
                         <Icon size={22} />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-100/80 px-2.5 py-1 rounded-lg">
-                        {item.tag}
-                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-100/80 px-2.5 py-1 rounded-lg">{item.tag}</span>
                     </div>
                     <div className="relative z-10">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        {item.label}
-                      </p>
-                      <p className="mt-1 text-base font-black text-slate-900 tracking-tight transition-colors group-hover/item:text-emerald-700">
-                        {item.value}
-                      </p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}</p>
+                      <p className="mt-1 text-base font-black text-slate-900 tracking-tight transition-colors group-hover/item:text-emerald-700">{item.value}</p>
                     </div>
                   </div>
                 );
@@ -218,9 +172,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
               <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
                 <Phone size={18} />
               </div>
-              <h3 className="text-lg font-black text-slate-900 tracking-tight">
-                Layanan & Kontak Resmi Desa
-              </h3>
+              <h3 className="text-lg font-black text-slate-900 tracking-tight">Layanan & Kontak Resmi Desa</h3>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -240,21 +192,13 @@ export default function InformationVillage({ village }: InformationVillageProps)
                       )}
                     </div>
                     <div className="space-y-1">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        {item.label}
-                      </p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}</p>
                       {item.href && item.value !== "-" ? (
-                        <a href={item.href} target={item.isExternal ? "_blank" : undefined} rel={item.isExternal ? "noopener noreferrer" : undefined} className="block truncate text-sm font-black text-slate-900 tracking-tight transition-colors hover:text-emerald-700 hover:underline">
-                          {item.value}
-                        </a>
+                        <a href={item.href} target={item.isExternal ? "_blank" : undefined} rel={item.isExternal ? "noopener noreferrer" : undefined} className="block truncate text-sm font-black text-slate-900 tracking-tight transition-colors hover:text-emerald-700 hover:underline">{item.value}</a>
                       ) : (
-                        <p className="truncate text-sm font-black text-slate-900 tracking-tight">
-                          {item.value}
-                        </p>
+                        <p className="truncate text-sm font-black text-slate-900 tracking-tight">{item.value}</p>
                       )}
-                      <p className="text-xs text-slate-500 font-medium pt-1">
-                        {item.desc}
-                      </p>
+                      <p className="text-xs text-slate-500 font-medium pt-1">{item.desc}</p>
                     </div>
                   </div>
                 );
@@ -268,9 +212,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
               <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
                 <Navigation size={18} />
               </div>
-              <h3 className="text-lg font-black text-slate-900 tracking-tight">
-                Lokasi Geografis & Teritorial
-              </h3>
+              <h3 className="text-lg font-black text-slate-900 tracking-tight">Lokasi Geografis & Teritorial</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
@@ -281,12 +223,8 @@ export default function InformationVillage({ village }: InformationVillageProps)
                       <MapPin size={26} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Alamat Kantor Desa
-                      </p>
-                      <h4 className="text-sm font-black text-slate-900 tracking-tight">
-                        Titik Pusat Pelayanan Publik
-                      </h4>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Alamat Kantor Desa</p>
+                      <h4 className="text-sm font-black text-slate-900 tracking-tight">Titik Pusat Pelayanan Publik</h4>
                     </div>
                   </div>
 
@@ -306,9 +244,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
                 </div>
 
                 <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 border border-slate-100 shadow-inner">
-                  <p className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-relaxed">
-                    {fullAddress}
-                  </p>
+                  <p className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-relaxed">{fullAddress}</p>
                 </div>
               </div>
 
@@ -318,19 +254,13 @@ export default function InformationVillage({ village }: InformationVillageProps)
                     <Maximize2 size={26} />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Luas Wilayah
-                    </p>
-                    <h4 className="text-sm font-black text-slate-900 tracking-tight">
-                      Total Area Teritorial
-                    </h4>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Luas Wilayah</p>
+                    <h4 className="text-sm font-black text-slate-900 tracking-tight">Total Area Teritorial</h4>
                   </div>
                 </div>
 
                 <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 border border-slate-100 shadow-inner">
-                  <p className="text-xl sm:text-2xl font-black text-emerald-700 tracking-tight">
-                    {areaSize}
-                  </p>
+                  <p className="text-xl sm:text-2xl font-black text-emerald-700 tracking-tight">{areaSize}</p>
                 </div>
               </div>
             </div>
@@ -340,9 +270,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
               <div className="p-5 bg-gradient-to-r from-slate-50 via-white to-emerald-50/40 border-b border-slate-200/60 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <MapPin size={18} className="text-emerald-600" />
-                  <span className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
-                    Peta Interaktif & Kantor Desa
-                  </span>
+                  <span className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">Peta Interaktif & Kantor Desa</span>
                 </div>
                 <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 shadow-sm hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all duration-300">
                   <span>Buka di Google Maps</span>
@@ -351,17 +279,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
               </div>
 
               <div className="relative w-full h-[360px] sm:h-[420px] group">
-                <iframe
-                  title="Peta Desa"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.8203598767!2d109.4202019!3d-7.1894875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ffbcef97e9cb9%3A0xf485e1991cbf9a0c!2sBalai%20Desa%20Danasari%2C%20Kec%20Karangjambu%2C%20Kab%20Purbalingga!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="w-full h-full transition-transform duration-700 group-hover:scale-105"
-                />
+                <iframe title="Peta Desa" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.8203598767!2d109.4202019!3d-7.1894875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ffbcef97e9cb9%3A0xf485e1991cbf9a0c!2sBalai%20Desa%20Danasari%2C%20Kec%20Karangjambu%2C%20Kab%20Purbalingga!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" width="100%" height="100%" style={{ border: 0 }} allowFullScreen={false} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
               </div>
             </div>
 
@@ -371,9 +289,7 @@ export default function InformationVillage({ village }: InformationVillageProps)
                 <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
                   <Compass size={18} />
                 </div>
-                <h4 className="text-base font-black text-slate-900 tracking-tight">
-                  Batas Wilayah Administratif Desa
-                </h4>
+                <h4 className="text-base font-black text-slate-900 tracking-tight">Batas Wilayah Administratif Desa</h4>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -390,17 +306,11 @@ export default function InformationVillage({ village }: InformationVillageProps)
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white border border-emerald-100 text-emerald-600 shadow-sm transition-transform duration-300 group-hover/bound:rotate-45">
                           <CompassIcon size={18} />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                          Sisi {item.label}
-                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Sisi {item.label}</span>
                       </div>
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                          Berbatasan Dengan
-                        </p>
-                        <p className="mt-1 text-sm sm:text-base font-black text-slate-900 tracking-tight transition-colors group-hover/bound:text-emerald-700">
-                          {item.value}
-                        </p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Berbatasan Dengan</p>
+                        <p className="mt-1 text-sm sm:text-base font-black text-slate-900 tracking-tight transition-colors group-hover/bound:text-emerald-700">{item.value}</p>
                       </div>
                     </div>
                   );

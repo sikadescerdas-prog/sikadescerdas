@@ -36,35 +36,18 @@ export default function HeaderStore({ location = "Indonesia" }: HeaderStoreProps
 
       <style jsx>{`
         @keyframes fadeDown {
-          from {
-            opacity: 0;
-            transform: translateY(-15px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-15px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes auroraOne {
-          50% {
-            transform: translate(40px, 30px) scale(1.1);
-          }
+          50% { transform: translate(40px, 30px) scale(1.1); }
         }
-
         @keyframes auroraTwo {
-          50% {
-            transform: translate(-40px, 20px) scale(1.1);
-          }
+          50% { transform: translate(-40px, 20px) scale(1.1); }
         }
-
         @keyframes shine {
-          0%, 55% {
-            left: -50%;
-          }
-          75%, 100% {
-            left: 130%;
-          }
+          0%, 55% { left: -50%; }
+          75%, 100% { left: 130%; }
         }
       `}</style>
     </section>

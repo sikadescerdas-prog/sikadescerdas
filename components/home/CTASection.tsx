@@ -1,5 +1,4 @@
 // components/home/CTASection.tsx
-
 "use client";
 
 import Link from "next/link";
@@ -36,30 +35,20 @@ export default function CTASection() {
       <div className="relative mx-auto max-w-7xl px-6 py-6 sm:px-8 lg:px-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-green-50 backdrop-blur-md shadow-inner">
-            <Sparkles className="h-3.5 w-3.5 text-yellow-300 animate-pulse" />
-            Platform Desa Digital
+            <Sparkles className="h-3.5 w-3.5 text-yellow-300 animate-pulse" /> Platform Desa Digital
           </div>
 
-          <h2 className="mt-2.5 text-2xl font-bold tracking-tight text-white md:text-3xl">
-            Desa Danasari <span className="text-green-100">Maju & Modern</span>
-          </h2>
+          <h2 className="mt-2.5 text-2xl font-bold tracking-tight text-white md:text-3xl">Desa Danasari <span className="text-green-100">Maju & Modern</span></h2>
 
-          <p className="mt-1.5 text-sm text-green-50 leading-relaxed">
-            Nikmati kemudahan layanan administrasi, informasi, dan UMKM desa dalam satu genggaman.
-          </p>
+          <p className="mt-1.5 text-sm text-green-50 leading-relaxed">Nikmati kemudahan layanan administrasi, informasi, dan UMKM desa dalam satu genggaman.</p>
 
           <div className="mt-4 flex flex-wrap gap-2 sm:gap-3">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-md shadow-sm transition-transform duration-300 hover:scale-105"
-                >
+                <div key={index} className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-md shadow-sm transition-transform duration-300 hover:scale-105">
                   <Icon className={`h-4 w-4 ${feature.color}`} />
-                  <span className="text-xs font-medium text-white">
-                    {feature.title}
-                  </span>
+                  <span className="text-xs font-medium text-white">{feature.title}</span>
                 </div>
               );
             })}
@@ -67,18 +56,12 @@ export default function CTASection() {
         </div>
 
         <div className="flex w-full flex-col sm:flex-row gap-3 lg:w-auto">
-          <Link
-            href="/login"
-            className="group flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white px-5 py-3 text-sm font-bold text-emerald-900 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-50"
-          >
+          <Link href="/login" className="group flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white px-5 py-3 text-sm font-bold text-emerald-900 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-50">
             <span>Gabung Warga</span>
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
 
-          <Link
-            href="/village"
-            className="group flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:border-white/30"
-          >
+          <Link href="/village" className="group flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:border-white/30">
             <BookOpen className="h-4 w-4" />
             <span>Profil Desa</span>
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

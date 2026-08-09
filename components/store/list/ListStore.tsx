@@ -11,26 +11,18 @@ export default function ListStore() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {[1, 2, 3].map((item) => (
-          <div key={item} className="h-64 rounded-2xl bg-slate-100 animate-pulse" />
-        ))}
+        {[1, 2, 3].map((item) => (<div key={item} className="h-64 rounded-2xl bg-slate-100 animate-pulse" />))}
       </div>
     );
   }
 
   if (!stores.length) {
-    return (
-      <div className="py-10 text-center text-slate-400">
-        Belum ada toko
-      </div>
-    );
+    return (<div className="py-10 text-center text-slate-400">Belum ada toko</div>);
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {stores.map((store) => (
-        <StoreCard key={store.id} store={store} />
-      ))}
+      {stores.map((store) => (<StoreCard key={store.id} store={store} />))}
     </div>
   );
 }

@@ -1,5 +1,4 @@
 // components/village/PopulationVillage.tsx
-
 "use client";
 
 import React, { useId } from "react";
@@ -7,49 +6,20 @@ import { Users, Mars, Venus, Sparkles } from "lucide-react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import CountUp from "react-countup";
 
-interface PopulationVillageProps {
-  male: number;
-  female: number;
-  year?: string;
-}
+interface PopulationVillageProps { male: number; female: number; year?: string; }
+interface LegendProps { color: string; text: string; }
+interface CustomTooltipProps { active?: boolean; payload?: Array<{ name: string; value: number; payload: { percentage: number; }; }>; }
 
-interface LegendProps {
-  color: string;
-  text: string;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    name: string;
-    value: number;
-    payload: {
-      percentage: number;
-    };
-  }>;
-}
-
-function calculateTotal(male: number, female: number): number {
-  return male + female;
-}
-
-function calculatePercentage(value: number, total: number): number {
-  if (total === 0) return 0;
-  return Number(((value / total) * 100).toFixed(1));
-}
+function calculateTotal(male: number, female: number): number { return male + female; }
+function calculatePercentage(value: number, total: number): number { if (total === 0) return 0; return Number(((value / total) * 100).toFixed(1)); }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
       <div className="rounded-xl bg-slate-900/90 backdrop-blur-md px-4 py-3 text-white shadow-2xl border border-slate-700/80 text-xs animate-in fade-in zoom-in-95 duration-200">
-        <p className="font-bold flex items-center gap-1.5 mb-1">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping" />
-          {data.name}
-        </p>
-        <p className="text-slate-200 font-semibold text-sm">
-          <CountUp end={data.value} separator="." /> Jiwa ({data.payload.percentage}%)
-        </p>
+        <p className="font-bold flex items-center gap-1.5 mb-1"><span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping" />{data.name}</p>
+        <p className="text-slate-200 font-semibold text-sm"><CountUp end={data.value} separator="." /> Jiwa ({data.payload.percentage}%)</p>
       </div>
     );
   }
@@ -60,9 +30,7 @@ function Legend({ color, text }: LegendProps) {
   return (
     <div className="flex items-center gap-2 transition-transform duration-300 hover:scale-105 cursor-pointer">
       <div className={`w-3 h-3 rounded-full ${color} shadow-sm transition-all duration-300 hover:ring-4 hover:ring-emerald-200`} />
-      <span className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-        {text}
-      </span>
+      <span className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">{text}</span>
     </div>
   );
 }
@@ -86,33 +54,14 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
     <div className="w-full mx-auto group/card">
       <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white shadow-2xl shadow-green-950/5 transition-all duration-700 hover:shadow-green-950/20 hover:-translate-y-1">
         <style jsx>{`
-          @keyframes morphBlob {
-            0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
-            33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); }
-            66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); }
-          }
-          @keyframes floatSlow {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(3deg); }
-          }
-          @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.08); }
-          }
-          @keyframes shimmerSlide {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
+          @keyframes morphBlob { 0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); } 33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); } 66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); } }
+          @keyframes floatSlow { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+          @keyframes pulseGlow { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.08); } }
+          @keyframes shimmerSlide { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
           .blob-anim { animation: morphBlob 8s ease-in-out infinite; }
           .float-anim { animation: floatSlow 5s ease-in-out infinite; }
           .pulse-glow { animation: pulseGlow 4s ease-in-out infinite; }
-          .shimmer-bg::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmerSlide 3s infinite;
-          }
+          .shimmer-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: shimmerSlide 3s infinite; }
         `}</style>
 
         <div className="relative bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 px-8 py-7 overflow-hidden">
@@ -125,13 +74,8 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
                 <Users className="h-6 w-6 text-white drop-shadow" />
               </div>
               <div>
-                <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-2 drop-shadow-sm">
-                  Data Penduduk
-                  <Sparkles className="h-4 w-4 text-green-100 animate-pulse" />
-                </h2>
-                <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">
-                  Statistik demografi
-                </p>
+                <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-2 drop-shadow-sm">Data Penduduk <Sparkles className="h-4 w-4 text-green-100 animate-pulse" /></h2>
+                <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">Statistik demografi</p>
               </div>
             </div>
           </div>
@@ -146,31 +90,15 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
                 <div className="absolute inset-0 m-auto w-32 h-32 bg-emerald-100/60 rounded-full blur-2xl pointer-events-none pulse-glow" />
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5 transition-colors group-hover/card:text-slate-500">
-                    Total Jiwa
-                  </p>
-                  <p className="text-2xl font-black text-slate-900 tracking-tight transition-transform duration-300 group-hover/card:scale-105">
-                    <CountUp end={total} separator="." duration={2.5} />
-                  </p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5 transition-colors group-hover/card:text-slate-500">Total Jiwa</p>
+                  <p className="text-2xl font-black text-slate-900 tracking-tight transition-transform duration-300 group-hover/card:scale-105"><CountUp end={total} separator="." duration={2.5} /></p>
                 </div>
 
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      innerRadius={70}
-                      outerRadius={95}
-                      paddingAngle={8}
-                      stroke="#ffffff"
-                      strokeWidth={3}
-                    >
+                    <Pie data={chartData} dataKey="value" innerRadius={70} outerRadius={95} paddingAngle={8} stroke="#ffffff" strokeWidth={3}>
                       {chartData.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index]}
-                          className="transition-all duration-500 hover:opacity-80 hover:scale-105 cursor-pointer origin-center"
-                        />
+                        <Cell key={`cell-${index}`} fill={COLORS[index]} className="transition-all duration-500 hover:opacity-80 hover:scale-105 cursor-pointer origin-center" />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
@@ -191,18 +119,12 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
                     <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Total Penduduk Tercatat
-                    </p>
-                    <p className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                      <CountUp end={total} separator="." duration={2.5} />
-                    </p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Penduduk Tercatat</p>
+                    <p className="text-2xl font-black text-slate-900 tracking-tight mt-0.5"><CountUp end={total} separator="." duration={2.5} /></p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold tracking-wider uppercase border border-emerald-100 shadow-inner">
-                    Jiwa
-                  </span>
+                  <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold tracking-wider uppercase border border-emerald-100 shadow-inner">Jiwa</span>
                 </div>
               </div>
 
@@ -212,26 +134,14 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
                     <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-100/60 text-blue-600 shadow-inner transition-transform duration-300 group-hover/male:scale-110 group-hover/male:rotate-6">
                       <Mars className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 transition-colors group-hover/male:bg-blue-600 group-hover/male:text-white">
-                      {malePercentage}%
-                    </span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 transition-colors group-hover/male:bg-blue-600 group-hover/male:text-white">{malePercentage}%</span>
                   </div>
-
                   <div>
-                    <p className="text-xl font-black text-slate-900 tracking-tight">
-                      <CountUp end={male} separator="." duration={2.5} />
-                    </p>
-                    <p className="text-xs font-medium text-slate-500 mt-0.5">
-                      Laki-laki
-                    </p>
+                    <p className="text-xl font-black text-slate-900 tracking-tight"><CountUp end={male} separator="." duration={2.5} /></p>
+                    <p className="text-xs font-medium text-slate-500 mt-0.5">Laki-laki</p>
                   </div>
-
                   <div className="mt-3 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      id={maleProgressId}
-                      style={{ width: `${malePercentage}%` }}
-                      className="h-full rounded-full transition-all duration-1000 bg-blue-600 group-hover/male:brightness-115"
-                    />
+                    <div id={maleProgressId} style={{ width: `${malePercentage}%` }} className="h-full rounded-full transition-all duration-1000 bg-blue-600 group-hover/male:brightness-115" />
                   </div>
                 </div>
 
@@ -240,26 +150,14 @@ export default function PopulationVillage({ male, female }: PopulationVillagePro
                     <div className="p-2.5 rounded-xl bg-pink-50 border border-pink-100/60 text-pink-500 shadow-inner transition-transform duration-300 group-hover/female:scale-110 group-hover/female:rotate-6">
                       <Venus className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 transition-colors group-hover/female:bg-pink-500 group-hover/female:text-white">
-                      {femalePercentage}%
-                    </span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 transition-colors group-hover/female:bg-pink-500 group-hover/female:text-white">{femalePercentage}%</span>
                   </div>
-
                   <div>
-                    <p className="text-xl font-black text-slate-900 tracking-tight">
-                      <CountUp end={female} separator="." duration={2.5} />
-                    </p>
-                    <p className="text-xs font-medium text-slate-500 mt-0.5">
-                      Perempuan
-                    </p>
+                    <p className="text-xl font-black text-slate-900 tracking-tight"><CountUp end={female} separator="." duration={2.5} /></p>
+                    <p className="text-xs font-medium text-slate-500 mt-0.5">Perempuan</p>
                   </div>
-
                   <div className="mt-3 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      id={femaleProgressId}
-                      style={{ width: `${femalePercentage}%` }}
-                      className="h-full rounded-full transition-all duration-1000 bg-pink-500 group-hover/female:brightness-115"
-                    />
+                    <div id={femaleProgressId} style={{ width: `${femalePercentage}%` }} className="h-full rounded-full transition-all duration-1000 bg-pink-500 group-hover/female:brightness-115" />
                   </div>
                 </div>
               </div>

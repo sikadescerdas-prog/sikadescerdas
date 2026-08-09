@@ -1,5 +1,4 @@
 // components/village/HistoryVillage.tsx
-
 "use client";
 
 import Image from "next/image";
@@ -27,30 +26,14 @@ export default function HistoryVillage() {
   return (
     <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white shadow-2xl shadow-green-950/5 transition-all duration-700 hover:shadow-green-950/15">
       <style jsx>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(25px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes morphBlob {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(-15px, 15px) scale(1.15); }
-        }
-        @keyframes shimmerLine {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        @keyframes floatSlow {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-6px) rotate(2deg); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes morphBlob { 0%, 100% { transform: translate(0px, 0px) scale(1); } 50% { transform: translate(-15px, 15px) scale(1.15); } }
+        @keyframes shimmerLine { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes floatSlow { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
         .animate-fade-up { animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .blob-anim { animation: morphBlob 6s ease-in-out infinite; }
         .float-anim { animation: floatSlow 5s ease-in-out infinite; }
-        .shimmer-border {
-          background: linear-gradient(90deg, rgba(34,197,94,0.2) 0%, rgba(16,185,129,0.5) 50%, rgba(34,197,94,0.2) 100%);
-          background-size: 200% 100%;
-          animation: shimmerLine 4s linear infinite;
-        }
+        .shimmer-border { background: linear-gradient(90deg, rgba(34,197,94,0.2) 0%, rgba(16,185,129,0.5) 50%, rgba(34,197,94,0.2) 100%); background-size: 200% 100%; animation: shimmerLine 4s linear infinite; }
         .glass-card-hover { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .glass-card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -15px rgba(22, 163, 74, 0.15); }
       `}</style>
@@ -70,16 +53,13 @@ export default function HistoryVillage() {
                 Sejarah Desa
                 <Sparkles className="h-4 w-4 text-green-100 animate-pulse" />
               </h2>
-              <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">
-                Mengenal perjalanan & profil {village.name}
-              </p>
+              <p className="text-sm font-medium text-green-50 mt-0.5 tracking-wide">Mengenal perjalanan & profil {village.name}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="space-y-10 p-8 sm:p-10">
-        
         {/* HISTORY SECTION */}
         <div className="prose prose-slate max-w-none animate-fade-up">
           <p className="whitespace-pre-line leading-relaxed text-slate-600 text-base sm:text-lg font-normal tracking-wide">
@@ -104,17 +84,11 @@ export default function HistoryVillage() {
           <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-green-300/20 rounded-full blur-3xl transition-all duration-700 group-hover/card:scale-125 pointer-events-none" />
 
           <div className="relative z-10 flex flex-col items-center gap-8 text-center md:flex-row md:text-left">
-            
             {/* AVATAR CONTAINER */}
             <div className="relative shrink-0">
               <div className="absolute -inset-2 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-full blur-lg opacity-30 group-hover/card:opacity-75 transition-all duration-500 animate-pulse" />
               <div className="relative h-36 w-36 sm:h-40 sm:w-40 rounded-full p-1.5 bg-white shadow-2xl ring-4 ring-green-100/80 overflow-hidden">
-                <Image
-                  src={village.head?.photo || "/avatar.png"}
-                  alt={village.head?.name || "Kepala Desa"}
-                  fill
-                  className="rounded-full object-cover transition-transform duration-700 group-hover/card:scale-110 group-hover/card:rotate-1"
-                />
+                <Image src={village.head?.photo || "/avatar.png"} alt={village.head?.name || "Kepala Desa"} fill className="rounded-full object-cover transition-transform duration-700 group-hover/card:scale-110 group-hover/card:rotate-1" />
               </div>
             </div>
 
@@ -140,9 +114,7 @@ export default function HistoryVillage() {
                     <div className="p-1.5 rounded-xl bg-green-100/80 text-green-700 shadow-inner">
                       <Quote className="h-4 w-4" />
                     </div>
-                    <span className="font-extrabold text-xs uppercase tracking-wider text-green-800">
-                      Sambutan Kepala Desa
-                    </span>
+                    <span className="font-extrabold text-xs uppercase tracking-wider text-green-800">Sambutan Kepala Desa</span>
                   </div>
 
                   <p className="whitespace-pre-line italic leading-relaxed text-slate-700 text-sm sm:text-base font-medium">
@@ -150,12 +122,9 @@ export default function HistoryVillage() {
                   </p>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
-
       </div>
     </section>
   );

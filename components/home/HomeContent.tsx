@@ -1,4 +1,4 @@
-// modules/home/components/HomeContent.tsx
+// components/home/HomeContent.tsx
 "use client";
 
 import HeroSection from "@/components/home/HeroSection";

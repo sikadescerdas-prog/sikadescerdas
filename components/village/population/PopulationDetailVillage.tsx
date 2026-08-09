@@ -5,7 +5,6 @@
 import { useMemo, useState } from "react";
 import { Users } from "lucide-react";
 import { groupPopulation } from "./utils/populationHelper";
-
 import PopulationHeader from "./PopulationHeader";
 import PopulationStatsCards from "./PopulationStatsCards";
 import PopulationGenderRatio from "./PopulationGenderRatio";
@@ -23,9 +22,7 @@ interface PopulationDetailVillageProps {
       total: number;
       population_master_items: {
         name: string;
-        population_categories: {
-          name: string;
-        };
+        population_categories: { name: string; };
       };
     }[];
   }[];
@@ -36,9 +33,7 @@ export default function PopulationDetailVillage({ populations = [] }: Population
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [chartMode, setChartMode] = useState<Record<string, "bar" | "pie">>({});
 
-  const sortedPopulations = useMemo(() => {
-    return [...populations].sort((a, b) => b.year - a.year);
-  }, [populations]);
+  const sortedPopulations = useMemo(() => [...populations].sort((a, b) => b.year - a.year), [populations]);
 
   const population = useMemo(() => {
     if (!sortedPopulations || sortedPopulations.length === 0) return null;
@@ -52,17 +47,13 @@ export default function PopulationDetailVillage({ populations = [] }: Population
   }, [sortedPopulations, population]);
 
   const populationHistory = useMemo(() => {
-    return sortedPopulations
-      .filter((item) => item.year <= selectedYear)
-      .sort((a, b) => a.year - b.year)
-      .slice(-5)
-      .map((item) => ({
-        year: item.year,
-        total_population: item.total_population,
-        total_family_cards: item.total_family_cards,
-        total_male: item.total_male,
-        total_female: item.total_female,
-      }));
+    return sortedPopulations.filter((item) => item.year <= selectedYear).sort((a, b) => a.year - b.year).slice(-5).map((item) => ({
+      year: item.year,
+      total_population: item.total_population,
+      total_family_cards: item.total_family_cards,
+      total_male: item.total_male,
+      total_female: item.total_female,
+    }));
   }, [sortedPopulations, selectedYear]);
 
   const categories = useMemo(() => {
@@ -71,10 +62,7 @@ export default function PopulationDetailVillage({ populations = [] }: Population
   }, [population, previousPopulation]);
 
   const toggleChartMode = (name: string) => {
-    setChartMode((prev) => ({
-      ...prev,
-      [name]: prev[name] === "bar" ? "pie" : "bar",
-    }));
+    setChartMode((prev) => ({ ...prev, [name]: prev[name] === "bar" ? "pie" : "bar" }));
   };
 
   if (!population) {
@@ -90,53 +78,25 @@ export default function PopulationDetailVillage({ populations = [] }: Population
   return (
     <div className="w-full mx-auto space-y-10 group/card">
       <style jsx>{`
-        @keyframes morphBlob {
-          0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
-          33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); }
-          66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); }
-        }
-        @keyframes floatSlow {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-8px) rotate(3deg); }
-        }
-        @keyframes pulseGlow {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.08); }
-        }
+        @keyframes morphBlob { 0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); } 33% { transform: translate(-20px, 15px) scale(1.15) rotate(120deg); } 66% { transform: translate(15px, -15px) scale(0.9) rotate(240deg); } }
+        @keyframes floatSlow { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+        @keyframes pulseGlow { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.08); } }
         .blob-anim { animation: morphBlob 8s ease-in-out infinite; }
         .float-anim { animation: floatSlow 5s ease-in-out infinite; }
         .pulse-glow { animation: pulseGlow 4s ease-in-out infinite; }
       `}</style>
 
       {/* 1. BAGIAN HEADER */}
-      <PopulationHeader
-        population={population}
-        previousPopulation={previousPopulation}
-        sortedPopulations={sortedPopulations}
-        selectedYear={selectedYear}
-        setSelectedYear={setSelectedYear}
-      />
+      <PopulationHeader population={population} previousPopulation={previousPopulation} sortedPopulations={sortedPopulations} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
 
       {/* 2. BAGIAN 4 STATS CARDS */}
-      <PopulationStatsCards
-        population={population}
-        populationHistory={populationHistory}
-      />
+      <PopulationStatsCards population={population} populationHistory={populationHistory} />
 
       {/* 3. BAGIAN RASIO GENDER & PERBANDINGAN TAHUN LALU */}
-      <PopulationGenderRatio
-        population={population}
-        previousPopulation={previousPopulation}
-      />
+      <PopulationGenderRatio population={population} previousPopulation={previousPopulation} />
 
       {/* 4. BAGIAN KATEGORI & GRAFIK DETAIL */}
-      <PopulationCategories
-        categories={categories}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        chartMode={chartMode}
-        toggleChartMode={toggleChartMode}
-      />
+      <PopulationCategories categories={categories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} chartMode={chartMode} toggleChartMode={toggleChartMode} />
     </div>
   );
 }

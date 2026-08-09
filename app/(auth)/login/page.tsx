@@ -1,4 +1,4 @@
-// app/login/page.tsx
+// app/(auth)/login/page.tsx
 
 import LayoutAuth from "@/components/auth/LayoutAuth";
 import FormLogin from "@/components/auth/FormLogin";
