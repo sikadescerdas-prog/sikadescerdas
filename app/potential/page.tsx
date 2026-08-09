@@ -1,47 +1,94 @@
-// app/village/potentials/page.tsx
+// app/potentials/page.tsx
+
+export const dynamic = "force-dynamic";
 
 import HeaderVillage from "@/components/village/HeaderVillage";
-import PotentialVillage from "@/components/village/PotentialsVillage";
+import PotentialVillageCombined from "@/components/village/PotentialsVillage";
+import { prisma } from "@/lib/prisma";
 
-async function getPotentials() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/dashboard/potential`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return await res.json();
-  } catch (error) {
-    console.error("Gagal memuat potensi:", error);
-    return [];
+export default async function PotentialsPage() {
+  const village = await prisma.villages.findFirst();
+
+  if (!village) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-slate-500">Data desa belum tersedia</p>
+      </main>
+    );
   }
-}
 
-async function getFacilities() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/dashboard/facility`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return await res.json();
-  } catch (error) {
-    console.error("Gagal memuat fasilitas:", error);
-    return [];
-  }
-}
+  const [potentials, facilities] = await Promise.all([
+    prisma.village_potentials.findMany({
+      where: { village_id: village.id },
+      include: {
+        village_potential_categories: true,
+      },
+      orderBy: { created_at: "desc" },
+    }),
+    prisma.village_facilities.findMany({
+      where: { village_id: village.id },
+      include: {
+        village_facility_types: {
+          include: {
+            village_facility_categories: true,
+          },
+        },
+      },
+      orderBy: { created_at: "desc" },
+    }),
+  ]);
 
-export default async function Page() {
-  const [potentials, facilities] = await Promise.all([getPotentials(), getFacilities()]);
+  const formattedPotentials = potentials.map((item) => ({
+    id: item.id.toString(),
+    name: item.name,
+    description: item.description ?? undefined,
+    address: item.address ?? undefined,
+    link_maps: item.link_maps ?? undefined,
+    website: item.website ?? undefined,
+    image_url: item.image_url ?? undefined,
+    village_potential_categories: item.village_potential_categories
+      ? { name: item.village_potential_categories.name }
+      : undefined,
+  }));
+
+  const formattedFacilities = facilities.map((item) => ({
+    id: item.id.toString(),
+    name: item.name,
+    address: item.address ?? undefined,
+    link_maps: item.link_maps ?? undefined,
+    image_url: item.image_url ?? undefined,
+    village_facility_types: item.village_facility_types
+      ? {
+          name: item.village_facility_types.name,
+          village_facility_categories: item.village_facility_types.village_facility_categories
+            ? { name: item.village_facility_types.village_facility_categories.name }
+            : undefined,
+        }
+      : undefined,
+  }));
 
   const villageInfo = {
-    name: potentials[0]?.villages?.name || "Desa Mandiri Sejahtera",
-    logo: potentials[0]?.villages?.logo_url || null,
-    address: { district: potentials[0]?.villages?.district || "Kecamatan", regency: potentials[0]?.villages?.regency || "Kabupaten" },
+    name: village.name,
+    logo: village.logo_url,
+    address: {
+      district: village.district,
+      regency: village.regency,
+    },
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
-      <HeaderVillage title="Potensi & Fasilitas Desa" village={villageInfo} showBackButton={true} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
-        <div className="bg-transparent">
-          <PotentialVillage potentials={potentials} facilities={facilities} />
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-slate-50/50 pb-20">
+      <HeaderVillage
+        title="Potensi & Fasilitas Desa"
+        village={villageInfo}
+        showBackButton={true}
+      />
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
+        <PotentialVillageCombined
+          potentials={formattedPotentials}
+          facilities={formattedFacilities}
+        />
+      </div>
+    </main>
   );
 }
