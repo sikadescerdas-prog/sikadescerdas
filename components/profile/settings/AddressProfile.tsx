@@ -10,11 +10,11 @@ import MapsProfile from "@/components/profile/settings/MapsProfile";
 import type { ProfileForm } from "@/core/profile/types/profile.types";
 
 type FieldKey =
-  | "province"
+  | "detailAddress"
+  | "village"
   | "regency"
   | "district"
-  | "village"
-  | "detailAddress";
+  | "province";
 
 interface AddressProfileProps {
   form: ProfileForm;
@@ -22,11 +22,11 @@ interface AddressProfileProps {
 }
 
 const FIELDS: { key: FieldKey; label: string }[] = [
-  { key: "province", label: "Provinsi" },
-  { key: "regency", label: "Kabupaten / Kota" },
-  { key: "district", label: "Kecamatan" },
-  { key: "village", label: "Desa / Kelurahan" },
   { key: "detailAddress", label: "Alamat Lengkap" },
+  { key: "village", label: "Desa / Kelurahan" },
+  { key: "district", label: "Kecamatan" },
+  { key: "regency", label: "Kabupaten / Kota" },
+  { key: "province", label: "Provinsi" },
 ];
 
 export default function AddressProfile({
@@ -55,13 +55,13 @@ export default function AddressProfile({
 
     switch (field) {
       case "province":
-        return trimmed || "Pilih provinsi";
+        return trimmed || "Masukkan provinsi";
       case "regency":
-        return trimmed || "Pilih kabupaten / kota";
+        return trimmed || "Masukkan kabupaten / kota";
       case "district":
-        return trimmed || "Pilih kecamatan";
+        return trimmed || "Masukkan kecamatan";
       case "village":
-        return trimmed || "Pilih desa / kelurahan";
+        return trimmed || "Masukkan desa / kelurahan";
       case "detailAddress":
         return trimmed || "Tambahkan alamat lengkap";
       default:

@@ -4,8 +4,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { sweet } from "@/shared/utils/sweet";
 
 interface StoreMarketplace { id: string; platform: string; url: string; is_active: boolean; }
@@ -125,14 +126,14 @@ export default function HeaderStoreDetail({ toko, isStoreOpen, onToggleStore, is
 
     try {
       await sweet.warning({
-  title: "Aplikasi TikTok",
-  text: "Silakan buka ini melalui aplikasi TikTok.",
-  confirmButtonText: "OK",
-});
+        title: "Aplikasi TikTok",
+        text: "Silakan buka ini melalui aplikasi TikTok.",
+        confirmButtonText: "OK",
+      });
 
-setTimeout(() => {
-  window.location.reload();
-}, 1000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } finally {
       setIsTikTokLoading(false);
     }
@@ -160,7 +161,8 @@ setTimeout(() => {
             </button>
 
             {isOwner && (
-              <div className="relative z-30 animate-[fadeSlideDown_.5s_ease-out]">
+              <div className="flex items-center gap-2 relative z-30 animate-[fadeSlideDown_.5s_ease-out]">
+                {/* Tombol Toggle Buka/Tutup Toko */}
                 <button
                   type="button"
                   onClick={handleToggleClick}
@@ -177,6 +179,15 @@ setTimeout(() => {
                   <span className={`absolute left-2.5 text-[10px] font-bold tracking-wide text-white transition-all duration-300 ${isActive && isVerified ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-0"}`}>OPEN</span>
                   <span className={`absolute right-2.5 text-[10px] font-bold tracking-wide text-white transition-all duration-300 ${isActive && isVerified ? "translate-x-1 opacity-0" : "translate-x-0 opacity-100"}`}>CLOSED</span>
                 </button>
+
+                {/* Tombol Pengaturan Toko (Gear) */}
+                <Link
+                  href="/store/settings"
+                  aria-label="Pengaturan Toko"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/30 bg-white/80 text-slate-700 shadow-xl backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-emerald-600 hover:scale-105 active:scale-95"
+                >
+                  <Settings size={18} />
+                </Link>
               </div>
             )}
           </div>
