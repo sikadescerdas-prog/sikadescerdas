@@ -60,14 +60,14 @@ export async function getPopulationById(id: string): Promise<Population> {
 }
 
 // =========================
-// UPDATE POPULATION
+// UPDATE POPULATION (Diubah ke POST karena menggunakan upsert di route utama)
 // =========================
 export async function updatePopulation(
   id: string,
   payload: UpdatePopulationPayload
 ): Promise<Population> {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
+  const response = await fetch(API_URL, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

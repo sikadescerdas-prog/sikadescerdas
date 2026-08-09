@@ -11,7 +11,7 @@ async function main() {
   console.log('📌 Memeriksa village_structure_categories...');
   const existingGov = await prisma.village_structure_categories.findFirst({ where: { type: 'government' } });
   if (existingGov) {
-    console.log('   ⏭️ Data kategori struktur sudah ada, dilewati.');
+    console.log('    ⏭️ Data kategori struktur sudah ada, dilewati.');
   } else {
     await prisma.village_structure_categories.createMany({
       data: [
@@ -20,7 +20,7 @@ async function main() {
       ],
       skipDuplicates: true,
     });
-    console.log('   ✅ Data kategori struktur berhasil ditambahkan.');
+    console.log('    ✅ Data kategori struktur berhasil ditambahkan.');
   }
 
   const govCategory = await prisma.village_structure_categories.findUnique({
@@ -31,7 +31,7 @@ async function main() {
     where: { type: 'institution' },
   });
 
-  // A. Seeding Posisi Pemerintah Desa
+  // A. Seeding Posisi Pemerintah Desa (Diperbaiki agar aman dari duplikat)
   if (govCategory) {
     console.log('📌 Memeriksa village_structure_positions (Pemerintah Desa)...');
     const governmentPositions = [
@@ -40,20 +40,33 @@ async function main() {
       'Kasi Kesejahteraan', 'Kasi Pelayanan', 'Kepala Dusun'
     ];
 
-    const govPosData = governmentPositions.map((posName) => ({
-      category_id: govCategory.id,
-      name: posName,
-    }));
+    let newGovPosCount = 0;
 
-    const govPosResult = await prisma.village_structure_positions.createMany({
-      data: govPosData,
-      skipDuplicates: true,
-    });
+    for (const posName of governmentPositions) {
+      // Cek apakah posisi dengan nama dan category_id tersebut sudah ada
+      const existingPos = await prisma.village_structure_positions.findFirst({
+        where: {
+          category_id: govCategory.id,
+          name: posName,
+          group_id: null, // Pemerintah desa tidak memiliki group_id
+        },
+      });
 
-    if (govPosResult.count === 0) {
-      console.log('   ⏭️ Posisi pemerintah desa sudah lengkap, dilewati.');
+      if (!existingPos) {
+        await prisma.village_structure_positions.create({
+          data: {
+            category_id: govCategory.id,
+            name: posName,
+          },
+        });
+        newGovPosCount++;
+      }
+    }
+
+    if (newGovPosCount === 0) {
+      console.log('    ⏭️ Posisi pemerintah desa sudah lengkap, dilewati.');
     } else {
-      console.log(`   ✅ Posisi pemerintah desa berhasil ditambahkan (${govPosResult.count} data baru).`);
+      console.log(`    ✅ Posisi pemerintah desa berhasil ditambahkan (${newGovPosCount} data baru).`);
     }
   }
 
@@ -74,7 +87,6 @@ async function main() {
     ];
 
     for (const group of institutionGroups) {
-      // Upsert group lembaga desa
       const createdGroup = await prisma.village_structure_groups.upsert({
         where: {
           category_id_name: {
@@ -89,7 +101,6 @@ async function main() {
         },
       });
 
-      // Buat posisi jabatan terkait di dalam grup tersebut
       const groupPositions = [
         group.leader,
         group.sec,
@@ -98,16 +109,27 @@ async function main() {
         group.member,
       ];
 
-      await prisma.village_structure_positions.createMany({
-        data: groupPositions.map((posName) => ({
-          category_id: institutionCategory.id,
-          group_id: createdGroup.id,
-          name: posName,
-        })),
-        skipDuplicates: true,
-      });
+      for (const posName of groupPositions) {
+        const existingGroupPos = await prisma.village_structure_positions.findFirst({
+          where: {
+            category_id: institutionCategory.id,
+            group_id: createdGroup.id,
+            name: posName,
+          },
+        });
+
+        if (!existingGroupPos) {
+          await prisma.village_structure_positions.create({
+            data: {
+              category_id: institutionCategory.id,
+              group_id: createdGroup.id,
+              name: posName,
+            },
+          });
+        }
+      }
     }
-    console.log('   ✅ Data grup & posisi lembaga desa berhasil diperiksa/ditambahkan.');
+    console.log('    ✅ Data grup & posisi lembaga desa berhasil diperiksa/ditambahkan.');
   }
 
   // =====================================================
@@ -129,20 +151,23 @@ async function main() {
       create: { name: cat.name },
     });
 
-    const typesData = cat.types.map((typeName) => ({
-      category_id: createdCat.id,
-      name: typeName,
-    }));
+    let newTypesCount = 0;
+    for (const typeName of cat.types) {
+      const existingType = await prisma.village_facility_types.findFirst({
+        where: { category_id: createdCat.id, name: typeName },
+      });
+      if (!existingType) {
+        await prisma.village_facility_types.create({
+          data: { category_id: createdCat.id, name: typeName },
+        });
+        newTypesCount++;
+      }
+    }
 
-    const result = await prisma.village_facility_types.createMany({
-      data: typesData,
-      skipDuplicates: true,
-    });
-
-    if (result.count === 0) {
-      console.log(`   ⏭️ Fasilitas kategori "${cat.name}" sudah ada, dilewati.`);
+    if (newTypesCount === 0) {
+      console.log(`    ⏭️ Fasilitas kategori "${cat.name}" sudah ada, dilewati.`);
     } else {
-      console.log(`   ✅ Fasilitas kategori "${cat.name}" berhasil ditambahkan (${result.count} data baru).`);
+      console.log(`    ✅ Fasilitas kategori "${cat.name}" berhasil ditambahkan (${newTypesCount} data baru).`);
     }
   }
 
@@ -162,10 +187,10 @@ async function main() {
   for (const pot of potentials) {
     const existingPot = await prisma.village_potential_categories.findUnique({ where: { name: pot.name } });
     if (existingPot) {
-      console.log(`   ⏭️ Potensi "${pot.name}" sudah ada, dilewati.`);
+      console.log(`    ⏭️ Potensi "${pot.name}" sudah ada, dilewati.`);
     } else {
       await prisma.village_potential_categories.create({ data: pot });
-      console.log(`   ✅ Potensi "${pot.name}" berhasil ditambahkan.`);
+      console.log(`    ✅ Potensi "${pot.name}" berhasil ditambahkan.`);
     }
   }
 
@@ -221,21 +246,24 @@ async function main() {
     });
 
     let sortIdx = 1;
-    const itemsData = data.items.map((itemName) => {
-      const itemObj = { category_id: cat.id, name: itemName, sort_order: sortIdx };
+    let newItemsCount = 0;
+    for (const itemName of data.items) {
+      const existingItem = await prisma.population_master_items.findFirst({
+        where: { category_id: cat.id, name: itemName },
+      });
+      if (!existingItem) {
+        await prisma.population_master_items.create({
+          data: { category_id: cat.id, name: itemName, sort_order: sortIdx },
+        });
+        newItemsCount++;
+      }
       sortIdx++;
-      return itemObj;
-    });
+    }
 
-    const result = await prisma.population_master_items.createMany({
-      data: itemsData,
-      skipDuplicates: true,
-    });
-
-    if (result.count === 0) {
-      console.log(`   ⏭️ Kependudukan "${data.category.name}" sudah ada, dilewati.`);
+    if (newItemsCount === 0) {
+      console.log(`    ⏭️ Kependudukan "${data.category.name}" sudah ada, dilewati.`);
     } else {
-      console.log(`   ✅ Kependudukan "${data.category.name}" ditambahkan (${result.count} item baru).`);
+      console.log(`    ✅ Kependudukan "${data.category.name}" ditambahkan (${newItemsCount} item baru).`);
     }
   }
 
@@ -249,14 +277,18 @@ async function main() {
     'Keagamaan', 'Hukum', 'Lainnya'
   ];
 
-  const litResult = await prisma.literature_categories.createMany({
-    data: literatureCategories.map((litName) => ({ name: litName })),
-    skipDuplicates: true,
-  });
-  if (litResult.count === 0) {
-    console.log('   ⏭️ Kategori literasi sudah ada semua, dilewati.');
+  let newLitCount = 0;
+  for (const litName of literatureCategories) {
+    const existingLit = await prisma.literature_categories.findUnique({ where: { name: litName } });
+    if (!existingLit) {
+      await prisma.literature_categories.create({ data: { name: litName } });
+      newLitCount++;
+    }
+  }
+  if (newLitCount === 0) {
+    console.log('    ⏭️ Kategori literasi sudah ada semua, dilewati.');
   } else {
-    console.log(`   ✅ Kategori literasi berhasil ditambahkan (${litResult.count} data baru).`);
+    console.log(`    ✅ Kategori literasi berhasil ditambahkan (${newLitCount} data baru).`);
   }
 
   // =====================================================
@@ -268,14 +300,18 @@ async function main() {
     'Pertanian', 'Peternakan', 'Jasa', 'Lainnya'
   ];
 
-  const prodResult = await prisma.product_categories.createMany({
-    data: productCategories.map((prodName) => ({ name: prodName, is_active: true })),
-    skipDuplicates: true,
-  });
-  if (prodResult.count === 0) {
-    console.log('   ⏭️ Kategori produk sudah ada semua, dilewati.');
+  let newProdCount = 0;
+  for (const prodName of productCategories) {
+    const existingProd = await prisma.product_categories.findUnique({ where: { name: prodName } });
+    if (!existingProd) {
+      await prisma.product_categories.create({ data: { name: prodName, is_active: true } });
+      newProdCount++;
+    }
+  }
+  if (newProdCount === 0) {
+    console.log('    ⏭️ Kategori produk sudah ada semua, dilewati.');
   } else {
-    console.log(`   ✅ Kategori produk berhasil ditambahkan (${prodResult.count} data baru).`);
+    console.log(`    ✅ Kategori produk berhasil ditambahkan (${newProdCount} data baru).`);
   }
 
   console.log('🎉 Proses seeding selesai dengan cepat!');
