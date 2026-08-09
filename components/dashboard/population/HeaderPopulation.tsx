@@ -1,10 +1,10 @@
-// components/dashboard/structure/HeaderStructure.tsx
+// components/dashboard/population/HeaderPopulation.tsx
 
 "use client";
 
 import { Users } from "lucide-react";
 
-export default function HeaderStructure() {
+export default function HeaderPopulation() {
   return (
     <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-600 px-8 pb-6 pt-8">
       {/* Animated Background Elements */}
@@ -24,8 +24,8 @@ export default function HeaderStructure() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-white">Struktur Organisasi Desa</h2>
-              <p className="mt-1 text-sm text-white/90">Kelola pejabat, lembaga, dan masa periode jabatan desa</p>
+              <h2 className="text-2xl font-bold tracking-tight text-white">Populasi Desa</h2>
+              <p className="mt-1 text-sm text-white/90">Kelola data kependudukan, statistik warga, dan master kategori penduduk desa</p>
             </div>
           </div>
 
