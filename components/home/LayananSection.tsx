@@ -19,7 +19,7 @@ export default function LayananSection() {
           </div>
         </div>
 
-        <Link href="/layanan" className="hidden items-center gap-1 text-sm font-semibold text-red-600 hover:underline md:flex">Semua <ArrowRight size={15} /></Link>
+        <Link href="/service" className="hidden items-center gap-1 text-sm font-semibold text-red-600 hover:underline md:flex">Semua <ArrowRight size={15} /></Link>
       </div>
 
       {/* GRID */}
@@ -27,7 +27,7 @@ export default function LayananSection() {
         {services.slice(0, 6).map((service) => {
           const Icon = service.icon;
           return (
-            <Link key={service.id} href={`/layanan/${service.id}`} className="group relative overflow-hidden rounded-2xl border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <Link key={service.id} href={`/service`} className="group relative overflow-hidden rounded-2xl border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               {/* ICON */}
               <div className={`relative mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${service.color} text-white shadow-md transition duration-300 group-hover:scale-110`}>
                 <Icon className="h-5 w-5" />
@@ -45,7 +45,7 @@ export default function LayananSection() {
       </div>
 
       {/* MOBILE BUTTON */}
-      <Link href="/layanan" className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-500 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl md:hidden">
+      <Link href="/service" className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-500 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl md:hidden">
         Lihat Semua Layanan <ArrowRight size={16} />
       </Link>
 
