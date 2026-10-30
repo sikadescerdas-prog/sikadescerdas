@@ -114,7 +114,7 @@ export default function TableMember({ onAdd, onEdit }: Props) {
           <div className="text-sm">
             <p className="font-semibold">Informasi Konfigurasi Struktur</p>
             <p className="mt-1 text-blue-700">
-              Untuk mulai mengelola data pengurus, silakan buat dan tentukan <strong>Masa Periode Jabatan</strong> terlebih dahulu agar setiap data pejabat dapat terdata dengan akurat.
+              Untuk mulai mengelola data pengurus, silakan buat dan tentukan <strong>Masa Periode Jabatan</strong> terlebih dahulu agar setiap data pengurus dapat terdata dengan akurat.
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function TableMember({ onAdd, onEdit }: Props) {
       <div className="flex flex-col gap-4 rounded-xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-semibold text-blue-600">Data Struktur Organisasi Desa</h2>
-          <p className="text-sm text-gray-500">Kelola seluruh pejabat dan anggota organisasi desa</p>
+          <p className="text-sm text-gray-500">Kelola seluruh pengurus dan anggota organisasi desa</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -151,7 +151,7 @@ export default function TableMember({ onAdd, onEdit }: Props) {
             className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700 sm:w-auto sm:gap-2 sm:px-4"
           >
             <Plus size={18} />
-            <span className="hidden sm:inline">Tambah Pejabat</span>
+            <span className="hidden sm:inline">Tambah Pengurus</span>
           </button>
         </div>
       </div>

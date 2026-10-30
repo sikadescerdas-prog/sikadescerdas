@@ -1,14 +1,67 @@
-// app/api/store/route.ts
+
+ // app/api/store/route.ts
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeBigInt } from "@/shared/utils/serializeBigInt";
+import { getCurrentUser } from "@/core/auth/session";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const slug = searchParams.get("slug") || "";
 
+    const slug = searchParams.get("slug") || "";
+    const mine = searchParams.get("mine") === "true";
+
+    // =========================================
+    // GET TOKO MILIK USER YANG SEDANG LOGIN
+    // GET /api/store?mine=true
+    // =========================================
+    if (mine) {
+      const session = await getCurrentUser();
+
+      if (!session || session.role !== "seller") {
+        return NextResponse.json(
+          { message: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      const store = await prisma.stores.findFirst({
+        where: {
+          owner_id: session.id,
+          is_active: true,
+        },
+        select: {
+          id: true,
+          owner_id: true,
+          name: true,
+          slug: true,
+          logo_url: true,
+          banner_url: true,
+          is_active: true,
+        },
+      });
+
+      if (!store) {
+        return NextResponse.json(
+          { message: "Toko milik akun ini tidak ditemukan" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        data: {
+          ...store,
+          id: String(store.id),
+        },
+      });
+    }
+
+    // =========================================
+    // GET DETAIL TOKO BERDASARKAN SLUG
+    // GET /api/store?slug=siti.pangan
+    // =========================================
     if (slug) {
       const store = await prisma.stores.findFirst({
         where: { slug },
@@ -37,6 +90,10 @@ export async function GET(request: Request) {
       });
     }
 
+    // =========================================
+    // GET SEMUA TOKO AKTIF (PUBLIK)
+    // GET /api/store
+    // =========================================
     const stores = await prisma.stores.findMany({
       where: { is_active: true },
       orderBy: { created_at: "desc" },

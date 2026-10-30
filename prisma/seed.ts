@@ -1,326 +1,828 @@
 // prisma/seed.ts
 
-import { prisma } from '@/lib/prisma';
+import "dotenv/config";
+
+import { PrismaClient } from "../lib/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
+
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL tidak terbaca dari .env");
+}
+
+const parsedUrl = new URL(databaseUrl);
+
+console.log("Database host:", parsedUrl.hostname);
+console.log("Database username:", parsedUrl.username);
+console.log("Password tersedia:", Boolean(parsedUrl.password));
+
+const adapter = new PrismaPg({
+  connectionString: databaseUrl,
+});
+
+const prisma = new PrismaClient({ adapter });
+
+const DEFAULT_PASSWORD = "Dummy123!";
+
+const productCategories = [
+  "Makanan",
+  "Minuman",
+  "Fashion",
+  "Kerajinan",
+  "Pertanian",
+  "Peternakan",
+  "Jasa",
+  "Lainnya",
+] as const;
+
+type ProductSeed = {
+  name: string;
+  slug: string;
+  description: string;
+  category: (typeof productCategories)[number];
+  price: string;
+  stock: number;
+  unit: string;
+  weight: number;
+  thumbnailUrl: string;
+};
+
+type SellerSeed = {
+  id: string;
+  email: string;
+  username: string;
+  fullname: string;
+  phone: string;
+  gender: string;
+  birthDate: Date;
+  bio: string;
+  province: string;
+  regency: string;
+  district: string;
+  village: string;
+  detailAddress: string;
+  avatarUrl: string;
+  store: {
+    name: string;
+    slug: string;
+    description: string;
+    phone: string;
+    email: string;
+    province: string;
+    regency: string;
+    district: string;
+    village: string;
+    address: string;
+    logoUrl: string;
+    bannerUrl: string;
+    shopeeUrl: string;
+    tiktokUrl: string;
+  };
+  products: ProductSeed[];
+};
+
+const sellers: SellerSeed[] = [
+  // =========================================================
+  // 1. TOKO ROBUSTA LERENG
+  // =========================================================
+  {
+    id: "dummy-seller-001",
+    email: "budi@example.com",
+    username: "budi.robusta",
+    fullname: "Budi Santoso",
+    phone: "081200000001",
+    gender: "Laki-laki",
+    birthDate: new Date("1990-04-12"),
+    bio: "Petani dan penjual kopi robusta lokal.",
+    province: "Jawa Tengah",
+    regency: "Kabupaten Temanggung",
+    district: "Parakan",
+    village: "Parakan Wetan",
+    detailAddress: "Jl. Kopi Robusta No. 1",
+    avatarUrl: "https://placehold.co/400x400?text=Budi",
+    store: {
+      name: "Robusta Lereng",
+      slug: "robusta-lereng",
+      description:
+        "Toko kopi robusta pilihan dan produk lokal berkualitas.",
+      phone: "081200000011",
+      email: "robusta@example.com",
+      province: "Jawa Tengah",
+      regency: "Kabupaten Temanggung",
+      district: "Parakan",
+      village: "Parakan Wetan",
+      address: "Jl. Kopi Robusta No. 1, Parakan",
+      logoUrl: "https://placehold.co/400x400?text=Robusta+Lereng",
+      bannerUrl: "https://placehold.co/1200x400?text=Robusta+Lereng",
+      shopeeUrl: "https://shopee.co.id/ISI_USERNAME_ROBUSTA_LERENG",
+      tiktokUrl: "https://www.tiktok.com/@ISI_USERNAME_ROBUSTA_LERENG",
+    },
+    products: [
+      {
+        name: "Kopi Robusta Bubuk 250 Gram",
+        slug: "robusta-lereng-kopi-robusta-bubuk-250-gram",
+        description:
+          "Kopi robusta lokal dengan aroma khas dan cita rasa yang kuat.",
+        category: "Minuman",
+        price: "35000",
+        stock: 50,
+        unit: "bungkus",
+        weight: 250,
+        thumbnailUrl: "https://placehold.co/600x600?text=Kopi+Robusta",
+      },
+      {
+        name: "Biji Kopi Robusta 1 Kg",
+        slug: "robusta-lereng-biji-kopi-robusta-1-kg",
+        description:
+          "Biji kopi robusta pilihan untuk kebutuhan usaha maupun rumahan.",
+        category: "Pertanian",
+        price: "85000",
+        stock: 30,
+        unit: "kg",
+        weight: 1000,
+        thumbnailUrl: "https://placehold.co/600x600?text=Biji+Kopi",
+      },
+      {
+        name: "Gula Aren Cair 250 ml",
+        slug: "robusta-lereng-gula-aren-cair-250-ml",
+        description:
+          "Gula aren cair untuk campuran minuman, kopi, dan makanan.",
+        category: "Makanan",
+        price: "18000",
+        stock: 40,
+        unit: "botol",
+        weight: 300,
+        thumbnailUrl: "https://placehold.co/600x600?text=Gula+Aren+Cair",
+      },
+      {
+        name: "Gula Aren Cetak 500 Gram",
+        slug: "robusta-lereng-gula-aren-cetak-500-gram",
+        description:
+          "Gula aren cetak dengan rasa manis khas untuk berbagai hidangan.",
+        category: "Makanan",
+        price: "22000",
+        stock: 35,
+        unit: "bungkus",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Gula+Aren",
+      },
+      {
+        name: "Sapu Lidi Tradisional",
+        slug: "robusta-lereng-sapu-lidi-tradisional",
+        description:
+          "Sapu lidi untuk membantu membersihkan halaman dan area rumah.",
+        category: "Kerajinan",
+        price: "15000",
+        stock: 25,
+        unit: "pcs",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Sapu+Lidi",
+      },
+    ],
+  },
+
+  // =========================================================
+  // 2. TOKO PANGAN LESTARI
+  // =========================================================
+  {
+    id: "dummy-seller-002",
+    email: "siti@example.com",
+    username: "siti.pangan",
+    fullname: "Siti Aminah",
+    phone: "081200000002",
+    gender: "Perempuan",
+    birthDate: new Date("1992-07-20"),
+    bio: "Menyediakan aneka pangan dan hasil bumi lokal.",
+    province: "Jawa Tengah",
+    regency: "Kabupaten Banyumas",
+    district: "Sokaraja",
+    village: "Sokaraja Kulon",
+    detailAddress: "Jl. Pangan Lestari No. 2",
+    avatarUrl: "https://placehold.co/400x400?text=Siti",
+    store: {
+      name: "Pangan Lestari",
+      slug: "pangan-lestari",
+      description:
+        "Produk pangan lokal untuk kebutuhan keluarga sehari-hari.",
+      phone: "081200000012",
+      email: "pangan@example.com",
+      province: "Jawa Tengah",
+      regency: "Kabupaten Banyumas",
+      district: "Sokaraja",
+      village: "Sokaraja Kulon",
+      address: "Jl. Pangan Lestari No. 2, Sokaraja",
+      logoUrl: "https://placehold.co/400x400?text=Pangan+Lestari",
+      bannerUrl: "https://placehold.co/1200x400?text=Pangan+Lestari",
+      shopeeUrl: "https://shopee.co.id/ISI_USERNAME_PANGAN_LESTARI",
+      tiktokUrl: "https://www.tiktok.com/@ISI_USERNAME_PANGAN_LESTARI",
+    },
+    products: [
+      {
+        name: "Kopi Robusta Bubuk 200 Gram",
+        slug: "pangan-lestari-kopi-robusta-bubuk-200-gram",
+        description:
+          "Kopi robusta bubuk untuk menemani aktivitas sehari-hari.",
+        category: "Minuman",
+        price: "28000",
+        stock: 40,
+        unit: "bungkus",
+        weight: 200,
+        thumbnailUrl: "https://placehold.co/600x600?text=Kopi+Bubuk",
+      },
+      {
+        name: "Gula Aren Asli 500 Gram",
+        slug: "pangan-lestari-gula-aren-asli-500-gram",
+        description:
+          "Gula aren lokal untuk bahan minuman dan aneka masakan.",
+        category: "Makanan",
+        price: "20000",
+        stock: 45,
+        unit: "bungkus",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Gula+Aren",
+      },
+      {
+        name: "Beras Lokal 5 Kg",
+        slug: "pangan-lestari-beras-lokal-5-kg",
+        description:
+          "Beras lokal untuk kebutuhan konsumsi sehari-hari.",
+        category: "Pertanian",
+        price: "75000",
+        stock: 25,
+        unit: "karung",
+        weight: 5000,
+        thumbnailUrl: "https://placehold.co/600x600?text=Beras+Lokal",
+      },
+      {
+        name: "Madu Murni 250 ml",
+        slug: "pangan-lestari-madu-murni-250-ml",
+        description:
+          "Madu dalam kemasan praktis untuk kebutuhan rumah tangga.",
+        category: "Makanan",
+        price: "45000",
+        stock: 20,
+        unit: "botol",
+        weight: 350,
+        thumbnailUrl: "https://placehold.co/600x600?text=Madu+Murni",
+      },
+      {
+        name: "Keripik Singkong 250 Gram",
+        slug: "pangan-lestari-keripik-singkong-250-gram",
+        description:
+          "Keripik singkong renyah untuk camilan bersama keluarga.",
+        category: "Makanan",
+        price: "15000",
+        stock: 50,
+        unit: "bungkus",
+        weight: 250,
+        thumbnailUrl: "https://placehold.co/600x600?text=Keripik+Singkong",
+      },
+    ],
+  },
+
+  // =========================================================
+  // 3. TOKO PERKAKAS JAYA
+  // =========================================================
+  {
+    id: "dummy-seller-003",
+    email: "andi@example.com",
+    username: "andi.perkakas",
+    fullname: "Andi Pratama",
+    phone: "081200000003",
+    gender: "Laki-laki",
+    birthDate: new Date("1988-02-15"),
+    bio: "Menyediakan perkakas rumah tangga dan produk kerajinan.",
+    province: "Jawa Tengah",
+    regency: "Kabupaten Purbalingga",
+    district: "Bobotsari",
+    village: "Bobotsari",
+    detailAddress: "Jl. Perkakas Jaya No. 3",
+    avatarUrl: "https://placehold.co/400x400?text=Andi",
+    store: {
+      name: "Perkakas Jaya",
+      slug: "perkakas-jaya",
+      description:
+        "Peralatan rumah tangga sederhana dan produk kerajinan lokal.",
+      phone: "081200000013",
+      email: "perkakas@example.com",
+      province: "Jawa Tengah",
+      regency: "Kabupaten Purbalingga",
+      district: "Bobotsari",
+      village: "Bobotsari",
+      address: "Jl. Perkakas Jaya No. 3, Bobotsari",
+      logoUrl: "https://placehold.co/400x400?text=Perkakas+Jaya",
+      bannerUrl: "https://placehold.co/1200x400?text=Perkakas+Jaya",
+      shopeeUrl: "https://shopee.co.id/ISI_USERNAME_PERKAKAS_JAYA",
+      tiktokUrl: "https://www.tiktok.com/@ISI_USERNAME_PERKAKAS_JAYA",
+    },
+    products: [
+      {
+        name: "Sapu Lidi Halaman",
+        slug: "perkakas-jaya-sapu-lidi-halaman",
+        description:
+          "Sapu lidi untuk membersihkan halaman dan area luar rumah.",
+        category: "Kerajinan",
+        price: "18000",
+        stock: 35,
+        unit: "pcs",
+        weight: 600,
+        thumbnailUrl: "https://placehold.co/600x600?text=Sapu+Lidi",
+      },
+      {
+        name: "Sapu Ijuk Tradisional",
+        slug: "perkakas-jaya-sapu-ijuk-tradisional",
+        description:
+          "Sapu ijuk untuk membantu menjaga kebersihan lantai rumah.",
+        category: "Kerajinan",
+        price: "25000",
+        stock: 30,
+        unit: "pcs",
+        weight: 700,
+        thumbnailUrl: "https://placehold.co/600x600?text=Sapu+Ijuk",
+      },
+      {
+        name: "Keset Sabut Kelapa",
+        slug: "perkakas-jaya-keset-sabut-kelapa",
+        description:
+          "Keset berbahan sabut kelapa untuk area pintu rumah.",
+        category: "Kerajinan",
+        price: "20000",
+        stock: 25,
+        unit: "pcs",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Keset+Sabut",
+      },
+      {
+        name: "Kemoceng Bulu",
+        slug: "perkakas-jaya-kemoceng-bulu",
+        description:
+          "Kemoceng untuk membantu membersihkan debu pada perabot.",
+        category: "Lainnya",
+        price: "12000",
+        stock: 40,
+        unit: "pcs",
+        weight: 200,
+        thumbnailUrl: "https://placehold.co/600x600?text=Kemoceng",
+      },
+      {
+        name: "Serok Sampah Plastik",
+        slug: "perkakas-jaya-serok-sampah-plastik",
+        description:
+          "Serok sampah untuk membantu kegiatan bersih-bersih rumah.",
+        category: "Lainnya",
+        price: "10000",
+        stock: 40,
+        unit: "pcs",
+        weight: 150,
+        thumbnailUrl: "https://placehold.co/600x600?text=Serok+Sampah",
+      },
+    ],
+  },
+
+  // =========================================================
+  // 4. TOKO BERKAH SEMBAKO
+  // =========================================================
+  {
+    id: "dummy-seller-004",
+    email: "rini@example.com",
+    username: "rini.sembako",
+    fullname: "Rini Wulandari",
+    phone: "081200000004",
+    gender: "Perempuan",
+    birthDate: new Date("1994-11-08"),
+    bio: "Menyediakan kebutuhan sembako dan bahan dapur.",
+    province: "Jawa Tengah",
+    regency: "Kabupaten Cilacap",
+    district: "Kroya",
+    village: "Kroya",
+    detailAddress: "Jl. Berkah Sembako No. 4",
+    avatarUrl: "https://placehold.co/400x400?text=Rini",
+    store: {
+      name: "Berkah Sembako",
+      slug: "berkah-sembako",
+      description:
+        "Toko kebutuhan dapur dan bahan pangan untuk keluarga.",
+      phone: "081200000014",
+      email: "sembako@example.com",
+      province: "Jawa Tengah",
+      regency: "Kabupaten Cilacap",
+      district: "Kroya",
+      village: "Kroya",
+      address: "Jl. Berkah Sembako No. 4, Kroya",
+      logoUrl: "https://placehold.co/400x400?text=Berkah+Sembako",
+      bannerUrl: "https://placehold.co/1200x400?text=Berkah+Sembako",
+      shopeeUrl: "https://shopee.co.id/ISI_USERNAME_BERKAH_SEMBAKO",
+      tiktokUrl: "https://www.tiktok.com/@ISI_USERNAME_BERKAH_SEMBAKO",
+    },
+    products: [
+      {
+        name: "Gula Aren Cetak 1 Kg",
+        slug: "berkah-sembako-gula-aren-cetak-1-kg",
+        description:
+          "Gula aren cetak untuk berbagai kebutuhan makanan dan minuman.",
+        category: "Makanan",
+        price: "38000",
+        stock: 30,
+        unit: "bungkus",
+        weight: 1000,
+        thumbnailUrl: "https://placehold.co/600x600?text=Gula+Aren",
+      },
+      {
+        name: "Kopi Robusta Bubuk 250 Gram",
+        slug: "berkah-sembako-kopi-robusta-bubuk-250-gram",
+        description:
+          "Kopi robusta bubuk untuk diseduh di rumah atau tempat kerja.",
+        category: "Minuman",
+        price: "32000",
+        stock: 35,
+        unit: "bungkus",
+        weight: 250,
+        thumbnailUrl: "https://placehold.co/600x600?text=Kopi+Robusta",
+      },
+      {
+        name: "Beras Premium 5 Kg",
+        slug: "berkah-sembako-beras-premium-5-kg",
+        description:
+          "Beras untuk kebutuhan makan keluarga sehari-hari.",
+        category: "Pertanian",
+        price: "85000",
+        stock: 20,
+        unit: "karung",
+        weight: 5000,
+        thumbnailUrl: "https://placehold.co/600x600?text=Beras+Premium",
+      },
+      {
+        name: "Minyak Kelapa 500 ml",
+        slug: "berkah-sembako-minyak-kelapa-500-ml",
+        description:
+          "Minyak kelapa untuk kebutuhan memasak di rumah.",
+        category: "Makanan",
+        price: "25000",
+        stock: 30,
+        unit: "botol",
+        weight: 550,
+        thumbnailUrl: "https://placehold.co/600x600?text=Minyak+Kelapa",
+      },
+      {
+        name: "Garam Dapur 500 Gram",
+        slug: "berkah-sembako-garam-dapur-500-gram",
+        description:
+          "Garam dapur untuk melengkapi kebutuhan bumbu masakan.",
+        category: "Makanan",
+        price: "8000",
+        stock: 50,
+        unit: "bungkus",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Garam+Dapur",
+      },
+    ],
+  },
+
+  // =========================================================
+  // 5. TOKO ALAM NATURAL STORE
+  // =========================================================
+  {
+    id: "dummy-seller-005",
+    email: "dewi@example.com",
+    username: "dewi.natural",
+    fullname: "Dewi Anggraini",
+    phone: "081200000005",
+    gender: "Perempuan",
+    birthDate: new Date("1993-05-25"),
+    bio: "Mendukung produk lokal dan kerajinan berbahan alami.",
+    province: "Jawa Tengah",
+    regency: "Kabupaten Kebumen",
+    district: "Gombong",
+    village: "Gombong",
+    detailAddress: "Jl. Alam Natural No. 5",
+    avatarUrl: "https://placehold.co/400x400?text=Dewi",
+    store: {
+      name: "Alam Natural Store",
+      slug: "alam-natural-store",
+      description:
+        "Produk alami, hasil bumi, dan kerajinan lokal.",
+      phone: "081200000015",
+      email: "natural@example.com",
+      province: "Jawa Tengah",
+      regency: "Kabupaten Kebumen",
+      district: "Gombong",
+      village: "Gombong",
+      address: "Jl. Alam Natural No. 5, Gombong",
+      logoUrl: "https://placehold.co/400x400?text=Alam+Natural",
+      bannerUrl: "https://placehold.co/1200x400?text=Alam+Natural",
+      shopeeUrl: "https://shopee.co.id/ISI_USERNAME_ALAM_NATURAL",
+      tiktokUrl: "https://www.tiktok.com/@ISI_USERNAME_ALAM_NATURAL",
+    },
+    products: [
+      {
+        name: "Kopi Robusta Organik 250 Gram",
+        slug: "alam-natural-kopi-robusta-organik-250-gram",
+        description:
+          "Kopi robusta lokal dalam kemasan praktis.",
+        category: "Minuman",
+        price: "40000",
+        stock: 25,
+        unit: "bungkus",
+        weight: 250,
+        thumbnailUrl: "https://placehold.co/600x600?text=Kopi+Organik",
+      },
+      {
+        name: "Gula Aren Cair 500 ml",
+        slug: "alam-natural-gula-aren-cair-500-ml",
+        description:
+          "Gula aren cair untuk pelengkap minuman dan makanan.",
+        category: "Makanan",
+        price: "30000",
+        stock: 25,
+        unit: "botol",
+        weight: 600,
+        thumbnailUrl: "https://placehold.co/600x600?text=Gula+Aren+Cair",
+      },
+      {
+        name: "Sapu Bambu Tradisional",
+        slug: "alam-natural-sapu-bambu-tradisional",
+        description:
+          "Sapu berbahan alami untuk membantu membersihkan rumah.",
+        category: "Kerajinan",
+        price: "22000",
+        stock: 20,
+        unit: "pcs",
+        weight: 700,
+        thumbnailUrl: "https://placehold.co/600x600?text=Sapu+Bambu",
+      },
+      {
+        name: "Keranjang Bambu Anyaman",
+        slug: "alam-natural-keranjang-bambu-anyaman",
+        description:
+          "Keranjang anyaman bambu untuk penyimpanan atau dekorasi.",
+        category: "Kerajinan",
+        price: "35000",
+        stock: 15,
+        unit: "pcs",
+        weight: 500,
+        thumbnailUrl: "https://placehold.co/600x600?text=Keranjang+Bambu",
+      },
+      {
+        name: "Sabun Herbal 100 Gram",
+        slug: "alam-natural-sabun-herbal-100-gram",
+        description:
+          "Sabun berbahan herbal untuk kebutuhan mandi sehari-hari.",
+        category: "Lainnya",
+        price: "15000",
+        stock: 30,
+        unit: "pcs",
+        weight: 100,
+        thumbnailUrl: "https://placehold.co/600x600?text=Sabun+Herbal",
+      },
+    ],
+  },
+];
 
 async function main() {
-  console.log('🌱 Memulai proses seeding data master...');
+  console.log("🌱 Memulai seed data dummy...\n");
 
-  // =====================================================
-  // 1. STRUCTURE CATEGORY, GROUPS & POSITIONS
-  // =====================================================
-  console.log('📌 Memeriksa village_structure_categories...');
-  const existingGov = await prisma.village_structure_categories.findFirst({ where: { type: 'government' } });
-  if (existingGov) {
-    console.log('    ⏭️ Data kategori struktur sudah ada, dilewati.');
-  } else {
-    await prisma.village_structure_categories.createMany({
-      data: [
-        { name: 'Pemerintah Desa', type: 'government', level: 1 },
-        { name: 'Lembaga Desa', type: 'institution', level: 2 },
-      ],
-      skipDuplicates: true,
+  // ---------------------------------------------------------
+  // 1. Ambil kategori yang SUDAH ADA
+  // Tidak membuat kategori baru.
+  // ---------------------------------------------------------
+  const existingCategories = await prisma.product_categories.findMany({
+    where: {
+      name: {
+        in: [...productCategories],
+      },
+    },
+  });
+
+  const categoryMap = new Map(
+    existingCategories.map((category) => [category.name, category.id]),
+  );
+
+  const missingCategories = productCategories.filter(
+    (name) => !categoryMap.has(name),
+  );
+
+  if (missingCategories.length > 0) {
+    throw new Error(
+      [
+        "Kategori berikut belum ditemukan di database:",
+        ...missingCategories.map((name) => `- ${name}`),
+        "Pastikan nama kategori sama persis dengan kategori aplikasi.",
+      ].join("\n"),
+    );
+  }
+
+  console.log(`✅ ${existingCategories.length} kategori tersedia.`);
+
+  // ---------------------------------------------------------
+  // 2. Hash password untuk semua akun dummy
+  // ---------------------------------------------------------
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+
+  // ---------------------------------------------------------
+  // 3. Buat akun, profil, toko, marketplace, dan produk
+  // ---------------------------------------------------------
+  for (const seller of sellers) {
+    console.log(`\n👤 Memproses ${seller.fullname}...`);
+
+    // Akun pengguna
+    const user = await prisma.users.upsert({
+      where: {
+        id: seller.id,
+      },
+      update: {
+        email: seller.email,
+        username: seller.username,
+        password_hash: passwordHash,
+        role: "user",
+        is_active: true,
+      },
+      create: {
+        id: seller.id,
+        email: seller.email,
+        username: seller.username,
+        password_hash: passwordHash,
+        role: "user",
+        is_active: true,
+      },
     });
-    console.log('    ✅ Data kategori struktur berhasil ditambahkan.');
-  }
 
-  const govCategory = await prisma.village_structure_categories.findUnique({
-    where: { type: 'government' },
-  });
+    // Profil lengkap
+    await prisma.profiles.upsert({
+      where: {
+        user_id: user.id,
+      },
+      update: {
+        fullname: seller.fullname,
+        phone: seller.phone,
+        bio: seller.bio,
+        gender: seller.gender,
+        birth_date: seller.birthDate,
+        avatar_url: seller.avatarUrl,
+        province: seller.province,
+        regency: seller.regency,
+        district: seller.district,
+        village: seller.village,
+        detail_address: seller.detailAddress,
+        is_completed: true,
+      },
+      create: {
+        user_id: user.id,
+        fullname: seller.fullname,
+        phone: seller.phone,
+        bio: seller.bio,
+        gender: seller.gender,
+        birth_date: seller.birthDate,
+        avatar_url: seller.avatarUrl,
+        province: seller.province,
+        regency: seller.regency,
+        district: seller.district,
+        village: seller.village,
+        detail_address: seller.detailAddress,
+        is_completed: true,
+      },
+    });
 
-  const institutionCategory = await prisma.village_structure_categories.findUnique({
-    where: { type: 'institution' },
-  });
+    // Toko milik pengguna
+    const store = await prisma.stores.upsert({
+      where: {
+        owner_id: user.id,
+      },
+      update: {
+        name: seller.store.name,
+        slug: seller.store.slug,
+        description: seller.store.description,
+        logo_url: seller.store.logoUrl,
+        banner_url: seller.store.bannerUrl,
+        phone: seller.store.phone,
+        email: seller.store.email,
+        province: seller.store.province,
+        regency: seller.store.regency,
+        district: seller.store.district,
+        village: seller.store.village,
+        address: seller.store.address,
+        is_store_complete: true,
+        is_verified: false,
+        is_active: true,
+      },
+      create: {
+        owner_id: user.id,
+        name: seller.store.name,
+        slug: seller.store.slug,
+        description: seller.store.description,
+        logo_url: seller.store.logoUrl,
+        banner_url: seller.store.bannerUrl,
+        phone: seller.store.phone,
+        email: seller.store.email,
+        province: seller.store.province,
+        regency: seller.store.regency,
+        district: seller.store.district,
+        village: seller.store.village,
+        address: seller.store.address,
+        is_store_complete: true,
+        is_verified: false,
+        is_active: true,
+      },
+    });
 
-  // A. Seeding Posisi Pemerintah Desa (Diperbaiki agar aman dari duplikat)
-  if (govCategory) {
-    console.log('📌 Memeriksa village_structure_positions (Pemerintah Desa)...');
-    const governmentPositions = [
-      'Kepala Desa', 'Sekretaris Desa', 'Kaur Tata Usaha dan Umum', 
-      'Kaur Keuangan', 'Kaur Perencanaan', 'Kasi Pemerintahan', 
-      'Kasi Kesejahteraan', 'Kasi Pelayanan', 'Kepala Dusun'
+    // Link marketplace: Shopee dan TikTok
+    const marketplaces = [
+      {
+        platform: "shopee",
+        url: seller.store.shopeeUrl,
+      },
+      {
+        platform: "tiktok",
+        url: seller.store.tiktokUrl,
+      },
     ];
 
-    let newGovPosCount = 0;
-
-    for (const posName of governmentPositions) {
-      // Cek apakah posisi dengan nama dan category_id tersebut sudah ada
-      const existingPos = await prisma.village_structure_positions.findFirst({
+    for (const marketplace of marketplaces) {
+      await prisma.store_marketplaces.upsert({
         where: {
-          category_id: govCategory.id,
-          name: posName,
-          group_id: null, // Pemerintah desa tidak memiliki group_id
-        },
-      });
-
-      if (!existingPos) {
-        await prisma.village_structure_positions.create({
-          data: {
-            category_id: govCategory.id,
-            name: posName,
-          },
-        });
-        newGovPosCount++;
-      }
-    }
-
-    if (newGovPosCount === 0) {
-      console.log('    ⏭️ Posisi pemerintah desa sudah lengkap, dilewati.');
-    } else {
-      console.log(`    ✅ Posisi pemerintah desa berhasil ditambahkan (${newGovPosCount} data baru).`);
-    }
-  }
-
-  // B. Seeding Groups & Positions Lembaga Desa
-  if (institutionCategory) {
-    console.log('📌 Memeriksa village_structure_groups & positions (Lembaga Desa)...');
-    const institutionGroups = [
-      { name: 'PKK', leader: 'Ketua TP PKK', sec: 'Sekretaris TP PKK', treas: 'Bendahara TP PKK', member: 'Anggota TP PKK' },
-      { name: 'Karang Taruna', leader: 'Ketua Karang Taruna', sec: 'Sekretaris Karang Taruna', treas: 'Bendahara Karang Taruna', member: 'Anggota Karang Taruna' },
-      { name: 'LPM', leader: 'Ketua LPM', sec: 'Sekretaris LPM', treas: 'Bendahara LPM', member: 'Anggota LPM' },
-      { name: 'Posyandu', leader: 'Ketua Forum Posyandu', sec: 'Sekretaris Posyandu', treas: 'Bendahara Posyandu', member: 'Kader Posyandu' },
-      { name: 'Gapoktan', leader: 'Ketua Gapoktan', sec: 'Sekretaris Gapoktan', treas: 'Bendahara Gapoktan', member: 'Anggota Gapoktan' },
-      { name: 'BUMDes', leader: 'Direktur / Ketua BUMDes', sec: 'Sekretaris BUMDes', treas: 'Bendahara BUMDes', member: 'Unit Usaha / Pegawai BUMDes' },
-      { name: 'Linmas', leader: 'Komandan Regu Linmas', sec: 'Sekretaris Linmas', treas: 'Bendahara Linmas', member: 'Anggota Linmas' },
-      { name: 'RT', leader: 'Ketua RT', sec: 'Sekretaris RT', treas: 'Bendahara RT', member: 'Warga / Anggota RT' },
-      { name: 'RW', leader: 'Ketua RW', sec: 'Sekretaris RW', treas: 'Bendahara RW', member: 'Pengurus / Anggota RW' },
-      { name: 'BPD', leader: 'Ketua BPD', sec: 'Sekretaris BPD', treas: 'Bendahara BPD', member: 'Anggota BPD' },
-    ];
-
-    for (const group of institutionGroups) {
-      const createdGroup = await prisma.village_structure_groups.upsert({
-        where: {
-          category_id_name: {
-            category_id: institutionCategory.id,
-            name: group.name,
+          store_id_platform: {
+            store_id: store.id,
+            platform: marketplace.platform,
           },
         },
-        update: {},
+        update: {
+          url: marketplace.url,
+        },
         create: {
-          category_id: institutionCategory.id,
-          name: group.name,
+          store_id: store.id,
+          platform: marketplace.platform,
+          url: marketplace.url,
         },
       });
-
-      const groupPositions = [
-        group.leader,
-        group.sec,
-        group.treas,
-        `Koordinator Bidang / Seksi ${group.name}`,
-        group.member,
-      ];
-
-      for (const posName of groupPositions) {
-        const existingGroupPos = await prisma.village_structure_positions.findFirst({
-          where: {
-            category_id: institutionCategory.id,
-            group_id: createdGroup.id,
-            name: posName,
-          },
-        });
-
-        if (!existingGroupPos) {
-          await prisma.village_structure_positions.create({
-            data: {
-              category_id: institutionCategory.id,
-              group_id: createdGroup.id,
-              name: posName,
-            },
-          });
-        }
-      }
     }
-    console.log('    ✅ Data grup & posisi lembaga desa berhasil diperiksa/ditambahkan.');
-  }
 
-  // =====================================================
-  // 2. VILLAGE FACILITY CATEGORIES & TYPES
-  // =====================================================
-  console.log('📌 Memeriksa village_facility_categories & types...');
-  const facilityCategoriesData = [
-    { name: 'Pendidikan', types: ['PAUD', 'TK', 'SD', 'SMP', 'SMA', 'SMK', 'Perguruan Tinggi'] },
-    { name: 'Kesehatan', types: ['Posyandu', 'Polindes', 'Puskesmas', 'Pustu', 'Klinik', 'Apotek'] },
-    { name: 'Ibadah', types: ['Masjid', 'Musala', 'Gereja', 'Pura', 'Vihara', 'Klenteng'] },
-    { name: 'Ekonomi', types: ['Pasar', 'BUMDes', 'Koperasi', 'Bank', 'UMKM', 'Minimarket'] },
-    { name: 'Umum', types: ['Balai Desa', 'Lapangan', 'Gedung Serbaguna', 'Perpustakaan', 'Terminal', 'Taman', 'Pemakaman'] },
-  ];
+    // Produk toko
+    for (const product of seller.products) {
+      const categoryId = categoryMap.get(product.category);
 
-  for (const cat of facilityCategoriesData) {
-    const createdCat = await prisma.village_facility_categories.upsert({
-      where: { name: cat.name },
-      update: {},
-      create: { name: cat.name },
-    });
+      if (categoryId === undefined) {
+        throw new Error(
+          `Kategori "${product.category}" tidak ditemukan untuk produk "${product.name}".`,
+        );
+      }
 
-    let newTypesCount = 0;
-    for (const typeName of cat.types) {
-      const existingType = await prisma.village_facility_types.findFirst({
-        where: { category_id: createdCat.id, name: typeName },
+      await prisma.products.upsert({
+        where: {
+          slug: product.slug,
+        },
+        update: {
+          store_id: store.id,
+          category_id: categoryId,
+          name: product.name,
+          description: product.description,
+          thumbnail_url: product.thumbnailUrl,
+          price: product.price,
+          stock: product.stock,
+          unit: product.unit,
+          weight: product.weight,
+          is_featured: false,
+          is_active: true,
+        },
+        create: {
+          store_id: store.id,
+          category_id: categoryId,
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          thumbnail_url: product.thumbnailUrl,
+          price: product.price,
+          stock: product.stock,
+          unit: product.unit,
+          weight: product.weight,
+          is_featured: false,
+          is_active: true,
+        },
       });
-      if (!existingType) {
-        await prisma.village_facility_types.create({
-          data: { category_id: createdCat.id, name: typeName },
-        });
-        newTypesCount++;
-      }
     }
 
-    if (newTypesCount === 0) {
-      console.log(`    ⏭️ Fasilitas kategori "${cat.name}" sudah ada, dilewati.`);
-    } else {
-      console.log(`    ✅ Fasilitas kategori "${cat.name}" berhasil ditambahkan (${newTypesCount} data baru).`);
-    }
+    console.log(`   ✅ Akun: ${seller.email}`);
+    console.log(`   ✅ Toko: ${seller.store.name}`);
+    console.log(`   ✅ Produk: ${seller.products.length}`);
+    console.log("   ✅ Profil lengkap");
+    console.log("   ✅ Link Shopee dan TikTok");
   }
 
-  // =====================================================
-  // 3. VILLAGE POTENTIAL CATEGORIES
-  // =====================================================
-  console.log('📌 Memeriksa village_potential_categories...');
-  const potentials = [
-    { name: 'Wisata', description: 'Potensi wisata alam, budaya, dan tempat rekreasi desa' },
-    { name: 'Pertanian', description: 'Potensi hasil pertanian dan perkebunan desa' },
-    { name: 'Peternakan', description: 'Potensi peternakan masyarakat desa' },
-    { name: 'Perikanan', description: 'Potensi perikanan dan budidaya ikan desa' },
-    { name: 'UMKM', description: 'Potensi usaha dan produk unggulan masyarakat desa' },
-    { name: 'Kerajinan', description: 'Potensi kerajinan lokal desa' },
-  ];
-
-  for (const pot of potentials) {
-    const existingPot = await prisma.village_potential_categories.findUnique({ where: { name: pot.name } });
-    if (existingPot) {
-      console.log(`    ⏭️ Potensi "${pot.name}" sudah ada, dilewati.`);
-    } else {
-      await prisma.village_potential_categories.create({ data: pot });
-      console.log(`    ✅ Potensi "${pot.name}" berhasil ditambahkan.`);
-    }
-  }
-
-  // =====================================================
-  // 4. POPULATION CATEGORIES & MASTER ITEMS
-  // =====================================================
-  console.log('📌 Memeriksa population_categories & master_items...');
-  const populationData = [
-    {
-      category: { name: 'Pendidikan', sort_order: 1 },
-      items: [
-        'Tidak / Belum Sekolah', 'Belum Tamat SD', 'SD / Sederajat', 
-        'SMP / Sederajat', 'SMA / Sederajat', 'Diploma III', 
-        'Diploma IV / S1', 'S2', 'S3'
-      ]
-    },
-    {
-      category: { name: 'Pekerjaan', sort_order: 2 },
-      items: [
-        'Belum / Tidak Bekerja', 'Pelajar', 'Mahasiswa', 'Ibu Rumah Tangga', 
-        'Petani', 'Buruh Tani', 'Peternak', 'Nelayan', 'Pedagang', 
-        'Wiraswasta', 'Karyawan Swasta', 'PNS / ASN', 'TNI', 'POLRI', 
-        'Guru / Dosen', 'Tenaga Kesehatan', 'Pensiunan', 'Pekerjaan Lainnya'
-      ]
-    },
-    {
-      category: { name: 'Agama', sort_order: 3 },
-      items: ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu', 'Kepercayaan Lainnya']
-    },
-    {
-      category: { name: 'Status Perkawinan', sort_order: 4 },
-      items: ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati']
-    },
-    {
-      category: { name: 'Kelompok Umur', sort_order: 5 },
-      items: ['0 - 5 Tahun', '6 - 12 Tahun', '13 - 17 Tahun', '18 - 25 Tahun', '26 - 35 Tahun', '36 - 45 Tahun', '46 - 60 Tahun', 'Diatas 60 Tahun']
-    },
-    {
-      category: { name: 'Kewarganegaraan', sort_order: 6 },
-      items: ['WNI', 'WNA']
-    },
-    {
-      category: { name: 'Disabilitas', sort_order: 7 },
-      items: ['Tidak Ada Disabilitas', 'Tuna Netra', 'Tuna Rungu', 'Tuna Wicara', 'Tuna Daksa', 'Tuna Grahita', 'Gangguan Mental / Jiwa', 'Disabilitas Lainnya']
-    }
-  ];
-
-  for (const data of populationData) {
-    const cat = await prisma.population_categories.upsert({
-      where: { name: data.category.name },
-      update: {},
-      create: data.category,
-    });
-
-    let sortIdx = 1;
-    let newItemsCount = 0;
-    for (const itemName of data.items) {
-      const existingItem = await prisma.population_master_items.findFirst({
-        where: { category_id: cat.id, name: itemName },
-      });
-      if (!existingItem) {
-        await prisma.population_master_items.create({
-          data: { category_id: cat.id, name: itemName, sort_order: sortIdx },
-        });
-        newItemsCount++;
-      }
-      sortIdx++;
-    }
-
-    if (newItemsCount === 0) {
-      console.log(`    ⏭️ Kependudukan "${data.category.name}" sudah ada, dilewati.`);
-    } else {
-      console.log(`    ✅ Kependudukan "${data.category.name}" ditambahkan (${newItemsCount} item baru).`);
-    }
-  }
-
-  // =====================================================
-  // 5. LITERATURE CATEGORIES
-  // =====================================================
-  console.log('📌 Memeriksa literature_categories...');
-  const literatureCategories = [
-    'Pendidikan', 'Kesehatan', 'Teknologi', 'Ekonomi', 'Pertanian', 
-    'Pemerintahan', 'Sosial & Masyarakat', 'Lingkungan', 'Budaya & Pariwisata', 
-    'Keagamaan', 'Hukum', 'Lainnya'
-  ];
-
-  let newLitCount = 0;
-  for (const litName of literatureCategories) {
-    const existingLit = await prisma.literature_categories.findUnique({ where: { name: litName } });
-    if (!existingLit) {
-      await prisma.literature_categories.create({ data: { name: litName } });
-      newLitCount++;
-    }
-  }
-  if (newLitCount === 0) {
-    console.log('    ⏭️ Kategori literasi sudah ada semua, dilewati.');
-  } else {
-    console.log(`    ✅ Kategori literasi berhasil ditambahkan (${newLitCount} data baru).`);
-  }
-
-  // =====================================================
-  // 6. PRODUCT CATEGORIES
-  // =====================================================
-  console.log('📌 Memeriksa product_categories...');
-  const productCategories = [
-    'Makanan', 'Minuman', 'Fashion', 'Kerajinan', 
-    'Pertanian', 'Peternakan', 'Jasa', 'Lainnya'
-  ];
-
-  let newProdCount = 0;
-  for (const prodName of productCategories) {
-    const existingProd = await prisma.product_categories.findUnique({ where: { name: prodName } });
-    if (!existingProd) {
-      await prisma.product_categories.create({ data: { name: prodName, is_active: true } });
-      newProdCount++;
-    }
-  }
-  if (newProdCount === 0) {
-    console.log('    ⏭️ Kategori produk sudah ada semua, dilewati.');
-  } else {
-    console.log(`    ✅ Kategori produk berhasil ditambahkan (${newProdCount} data baru).`);
-  }
-
-  console.log('🎉 Proses seeding selesai dengan cepat!');
+  console.log("\n========================================");
+  console.log("🎉 SEED BERHASIL!");
+  console.log("========================================");
+  console.log("Jumlah akun dummy : 5");
+  console.log("Jumlah toko       : 5");
+  console.log("Jumlah produk     : 25");
+  console.log("Produk per toko   : 5");
+  console.log("Password akun     :", DEFAULT_PASSWORD);
+  console.log("========================================\n");
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Terjadi kesalahan saat seeding:', e);
-    process.exit(1);
+  .catch((error) => {
+    console.error("\n❌ Seed gagal:", error);
+    process.exitCode = 1;
   })
   .finally(async () => {
     await prisma.$disconnect();

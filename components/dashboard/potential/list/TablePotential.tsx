@@ -16,15 +16,27 @@ interface Props {
   onSettings: () => void;
 }
 
-export default function TablePotential({ potentials, loading, onAdd, onEdit, onDelete, onSettings }: Props) {
-  const grouped = potentials.reduce((acc, item) => {
-    const category = item.village_potential_categories?.name ?? "Lainnya";
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {} as Record<string, Potential[]>);
+export default function TablePotential({
+  potentials,
+  loading,
+  onAdd,
+  onEdit,
+  onDelete,
+  onSettings,
+}: Props) {
+  const grouped = potentials.reduce(
+    (acc, item) => {
+      const category = item.village_potential_categories?.name ?? "Lainnya";
+
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+
+      acc[category].push(item);
+      return acc;
+    },
+    {} as Record<string, Potential[]>,
+  );
 
   async function handleDelete(id: string) {
     const result = await Swal.fire({
@@ -42,6 +54,7 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
 
     try {
       await onDelete(id);
+
       Swal.fire({
         icon: "success",
         title: "Berhasil",
@@ -59,7 +72,11 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
   }
 
   if (loading) {
-    return <div className="rounded-xl bg-white p-10 text-center text-gray-500">Memuat data potensi...</div>;
+    return (
+      <div className="rounded-xl bg-white p-10 text-center text-gray-500">
+        Memuat data potensi...
+      </div>
+    );
   }
 
   return (
@@ -68,7 +85,9 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
       <div className="flex items-center justify-between bg-white px-6 py-4">
         <div>
           <h3 className="font-semibold text-gray-800">Potensi Desa</h3>
-          <p className="text-sm text-gray-500">Kelola data potensi berdasarkan kategori</p>
+          <p className="text-sm text-gray-500">
+            Kelola data potensi berdasarkan kategori
+          </p>
         </div>
 
         <div className="flex gap-2">
@@ -94,27 +113,32 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
       {Object.entries(grouped).length === 0 && (
         <div className="rounded-xl bg-white p-12 text-center">
           <Trees size={48} className="mx-auto text-green-500" />
-          <p className="mt-3 font-medium text-gray-700">Belum ada potensi desa</p>
-          <p className="mt-1 text-sm text-gray-400">Silakan tambahkan potensi terlebih dahulu</p>
+          <p className="mt-3 font-medium text-gray-700">
+            Belum ada potensi desa
+          </p>
+          <p className="mt-1 text-sm text-gray-400">
+            Silakan tambahkan potensi terlebih dahulu
+          </p>
         </div>
       )}
 
       {/* TABLE GROUP */}
       {Object.entries(grouped).map(([category, items]) => (
-        <div key={category} className="overflow-hidden rounded-xl border bg-white">
+        <div
+          key={category}
+          className="overflow-hidden rounded-xl border bg-white"
+        >
           <div className="border-b px-6 py-4">
             <h3 className="font-semibold text-green-600">{category}</h3>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[850px] text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead className="bg-green-50">
                 <tr>
                   <th className="px-6 py-3 text-left">No</th>
-                  <th className="px-6 py-3 text-left">Potensi</th>
+                  <th className="px-6 py-3 text-left">Nama Potensi</th>
                   <th className="px-6 py-3 text-left">Kategori</th>
-                  <th className="px-6 py-3 text-left">Alamat</th>
-                  <th className="px-6 py-3 text-left">Website</th>
                   <th className="px-6 py-3 text-right">Aksi</th>
                 </tr>
               </thead>
@@ -128,33 +152,25 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
                       <div className="flex items-center gap-3">
                         <div className="relative flex h-14 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                           {item.image_url ? (
-                            <Image src={item.image_url} alt={item.name} fill className="object-cover" />
+                            <Image
+                              src={item.image_url}
+                              alt={item.name}
+                              fill
+                              className="object-cover"
+                            />
                           ) : (
                             <Trees size={24} className="text-gray-400" />
                           )}
                         </div>
 
-                        <span className="font-medium text-gray-900">{item.name}</span>
+                        <span className="font-medium text-gray-900">
+                          {item.name}
+                        </span>
                       </div>
                     </td>
 
-                    <td className="px-6 py-4">{item.village_potential_categories?.name ?? "-"}</td>
-
-                    <td className="px-6 py-4">{item.address ?? "-"}</td>
-
                     <td className="px-6 py-4">
-                      {item.website ? (
-                        <a
-                          href={item.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-green-600 hover:underline"
-                        >
-                          Kunjungi
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
+                      {item.village_potential_categories?.name ?? "-"}
                     </td>
 
                     <td className="px-6 py-4">
@@ -164,17 +180,26 @@ export default function TablePotential({ potentials, loading, onAdd, onEdit, onD
                             href={item.link_maps}
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label={`Lihat lokasi ${item.name}`}
                             className="rounded-lg p-2 text-blue-600 hover:bg-blue-50"
                           >
                             <MapPin size={16} />
                           </a>
                         )}
 
-                        <button onClick={() => onEdit(item)} className="rounded-lg p-2 hover:bg-gray-100">
+                        <button
+                          onClick={() => onEdit(item)}
+                          aria-label={`Edit ${item.name}`}
+                          className="rounded-lg p-2 hover:bg-gray-100"
+                        >
                           <Pencil size={16} />
                         </button>
 
-                        <button onClick={() => handleDelete(item.id)} className="rounded-lg p-2 text-red-500 hover:bg-red-50">
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          aria-label={`Hapus ${item.name}`}
+                          className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+                        >
                           <Trash2 size={16} />
                         </button>
                       </div>
